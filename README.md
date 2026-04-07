@@ -1,6 +1,6 @@
 # 🌍 GoSustain — Personal Carbon Footprint Tracker
 
-GoSustain is a MERN-based (Node.js, Express, MongoDB, EJS) web app that helps individuals **track, analyze, and reduce their carbon footprint** based on daily activities such as **travel, energy usage, and diet**.
+In the fight against climate change, we introduce GoSustain — a smart energy optimization platform that transforms sustainability into everyday action. It collects real-time device data, uncovers consumption patterns, and delivers hyper-personalized recommendations through interactive dashboards. Powered by anomaly detection and predictive AI, GoSustain automates savings, slashes wastage and carbon emissions, and empowers households and organizations to live greener — efficiently and affordably.
 
 ---
 
