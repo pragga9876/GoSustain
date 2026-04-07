@@ -1,0 +1,61 @@
+<div id="chatbox">
+  <div id="chat-icon" onclick="toggleChat()">
+    💬
+  </div>
+
+  <div id="chat-window">
+    <div class="chat-header">
+      <h4>EcoTrack Assistant 🌿</h4>
+      <button id="close-chat" onclick="toggleChat()">✕</button>
+    </div>
+
+    <div id="chat-messages"></div>
+
+    <form id="chat-form">
+      <input type="text" id="chat-input" placeholder="Ask about energy, travel, diet..." required>
+      <button type="submit">➤</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const chatWindow = document.getElementById('chat-window');
+const chatForm = document.getElementById('chat-form');
+const chatMessages = document.getElementById('chat-messages');
+const chatInput = document.getElementById('chat-input');
+
+function toggleChat() {
+  chatWindow.classList.toggle('active');
+}
+
+chatForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const message = chatInput.value.trim();
+  if (!message) return;
+
+  chatMessages.innerHTML += `<div class="chat-msg user">${message}</div>`;
+  chatInput.value = "";
+
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg bot typing';
+  typing.textContent = "Typing...";
+  chatMessages.appendChild(typing);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+    const data = await res.json();
+    typing.remove();
+    chatMessages.innerHTML += `<div class="chat-msg bot">${data.reply}</div>`;
+  } catch (err) {
+    typing.remove();
+    chatMessages.innerHTML += `<div class="chat-msg bot">⚠️ Error fetching reply</div>`;
+  }
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+});
+</script>
+

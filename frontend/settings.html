@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Screen</title>
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+    <div class="container">
+        <button class="back-button" onclick="goBack()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+            </button>
+        <div class="settings-container">
+             
+            <h1 class="page-title">Settings</h1>
+            <div class="settings-item" onclick="navigateToSetting('account')">
+                <div class="item-icon account-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#22c55e" stroke="#22c55e" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">Account</p>
+                </div>
+                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+
+            <div class="settings-item" onclick="navigateToSetting('notifications')">
+                <div class="item-icon notifications-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#22c55e" stroke="#22c55e"stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">Notifications</p>
+                </div>
+                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+
+            <div class="settings-item" onclick="navigateToSetting('linked-accounts')">
+                <div class="item-icon linked-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">Linked Accounts</p>
+                    <p class="item-subtitle">Google Calendar</p>
+                </div>
+                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+
+            <div class="settings-item appearance-item">
+                <div class="item-icon appearance-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#22c55e" stroke="#22c55e" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">Appearance</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" class="toggle-input" id="appearanceToggle" onchange="toggleAppearance()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="settings-item" onclick="navigateToSetting('privacy')">
+                <div class="item-icon privacy-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                        <path d="M12 22s8-1.5 8-10V5l-8-3-8 3v7c0 8.5 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">Privacy & Data</p>
+                </div>
+                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+
+            <div class="settings-item" onclick="navigateToSetting('help')">
+                <div class="item-icon help-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4M12 8h.01"></path>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">Help & Support</p>
+                </div>
+                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+
+            <div class="settings-item" onclick="navigateToSetting('about')">
+                <div class="item-icon about-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4M12 8h.01"></path>
+                    </svg>
+                </div>
+                <div class="item-content">
+                    <p class="item-title">About Equil</p>
+                </div>
+                <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script src="settings.js"></script>
+    <script src="theme.js"></script>
+</body>
+</html>

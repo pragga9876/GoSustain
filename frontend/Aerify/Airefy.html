@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Airefy</title>
+  <meta name="description" content="Air Quality Index (AQI) viewer " />
+  <link rel="stylesheet" href="Airefy.css">
+</head>
+
+<body>
+  <div class="scene" aria-hidden="true"></div>
+  <svg class="bg-paths" role="img" aria-label="Decorative background paths">
+    <title>Decorative background lines</title>
+    <desc>A subtle technical wireframe of lines moving slowly behind the content.</desc>
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#7bd1ff" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="#9b87f5" stop-opacity="0.85" />
+      </linearGradient>
+    </defs>
+    <g>
+      <path d="M0,40 C120,90 240,10 360,60 S600,120 980,40" />
+      <path d="M0,120 C160,180 280,60 420,120 S720,200 980,120" />
+      <path d="M0,220 C100,300 280,200 440,260 S760,340 980,260" />
+      <path d="M0,340 C200,380 360,320 540,360 S820,420 980,380" />
+      <path d="M0,440 C140,500 320,420 520,460 S820,520 980,500" />
+      <path d="M0,540 C120,600 300,520 500,560 S820,620 980,600" />
+      <path d="M0,640 C160,700 340,620 540,660 S840,720 980,700" />
+      <path d="M0,740 C180,780 360,720 560,760 S860,820 980,800" />
+      <path d="M0,840 C200,880 380,820 580,860 S880,920 980,900" />
+    </g>
+  </svg>
+
+  <div class="wrap">
+    <header class="appbar">
+      <div class="brand">
+        <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" role="img"
+          xmlns="http://www.w3.org/2000/svg">
+          <title>Airefy logo</title>
+          <desc>Stylized italic A with one longer leg inside a rounded square.</desc>
+          <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" opacity=".35" />
+          <path d="M7 20 L13 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+          <path d="M17 17 L13 7" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+          <path d="M11 12.8 H15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+
+        <span>Airefy</span>
+      </div>
+      <div class="controls">
+        <button id="themeBtn" aria-label="Toggle color theme" class="btn theme-toggle" aria-pressed="true"
+          title="Toggle dark/light theme">
+          <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" />
+            <g stroke="currentColor" opacity=".8">
+              <path
+                d="M12 2v3M12 19v3M2 12h3M19 12h3M4.2 4.2l2.2 2.2M17.6 17.6l2.2 2.2M4.2 19.8l2.2-2.2M17.6 6.4l2.2-2.2" />
+            </g>
+          </svg>
+          <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5Z" stroke="currentColor" />
+          </svg>
+          <span class="visually-hidden">Toggle theme</span>
+        </button>
+        <button id="resetBtn" aria-label="Reset cached result and theme" class="btn"
+          title="Reset cached result and theme">Reset</button>
+      </div>
+    </header>
+
+    <section class="card search" role="search" aria-label="Air quality search">
+      <div class="input-wrap">
+        <svg class="icon-search" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.5" />
+          <path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          <title>Search</title>
+          <desc>Magnifying glass icon</desc>
+        </svg>
+        <input id="searchInput" type="search" placeholder="Search: India, Kolkata, Tripura, Mumbai, New York, Pakistan"
+          aria-label="Search for a location" autocomplete="off" inputmode="search" autocapitalize="off"
+          spellcheck="false" />
+      </div>
+      <div aria-live="polite" aria-atomic="true" style="font-size:12px;color:var(--muted)">Type a location to show
+        results.</div>
+    </section>
+
+    <main class="grid" aria-live="polite">
+      <section class="card panel proximity-glow" aria-labelledby="h-current">
+        <div class="headline">
+          <h1 id="h-current" class="place">—</h1>
+          <div class="updated" id="updated">—</div>
+        </div>
+        <div class="aqi">
+          <div class="chip" id="aqiChip">AQI —</div>
+          <div>
+            <div>PM2.5: <strong id="pm25">—</strong> µg/m³</div>
+            <div class="bars" aria-label="AQI comparison bar graph">
+              <div class="bar" id="barPlace" aria-label="Place AQI bar" title="Place AQI"><span></span></div>
+              <div class="bar" id="barGood" aria-label="Comparison AQI bar" title=""><span></span></div>
+            </div>
+            <div class="compareRow"
+              style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--muted)">
+              <span id="compareText">Comparing with:</span>
+              <select id="compareSelect" aria-label="Choose comparison reference" class="btn" style="padding:6px 8px">
+                <option value="baseline">Very Good (PM2.5 12)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <p class="note">Why this might differ: Values may vary depending on provider, station coverage, averaging
+          windows, and AQI computation methods.</p>
+      </section>
+
+      <section class="card panel proximity-glow" aria-labelledby="h-breakdown">
+        <h2 id="h-breakdown" style="margin-top:0">Pollutant breakdown</h2>
+        <div class="breakdown" aria-label="Breakdown of pollutants by percentage">
+          <div class="breakdown-bar" id="bdBar" role="img" aria-label="Stacked bar of pollutant percentages">
+            <span id="bdPM25" style="background: var(--c-pm25); width:0%" title="PM2.5"></span>
+            <span id="bdPM10" style="background: var(--c-pm10); width:0%" title="PM10"></span>
+            <span id="bdNO2" style="background: var(--c-no2); width:0%" title="NO₂"></span>
+            <span id="bdSO2" style="background: var(--c-so2); width:0%" title="SO₂"></span>
+            <span id="bdO3" style="background: var(--c-o3);  width:0%" title="O₃"></span>
+            <span id="bdCO" style="background: var(--c-co);  width:0%" title="CO"></span>
+          </div>
+          <div class="legend" id="bdLegend" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <aside class="card panel proximity-glow" aria-labelledby="h-health">
+        <h2 id="h-health" style="margin-top:0">Health recommendations</h2>
+        <p id="healthIntro" style="margin-bottom:8px;color:var(--muted)">Guidance updates when you select a location.
+        </p>
+        <ul id="recs" style="padding-left:18px; margin: 0">
+          <li>Search a supported location to see recommendations.</li>
+        </ul>
+      </aside>
+    </main>
+  </div>
+
+  <div class="glow" id="glow" aria-hidden="true"></div>
+  <script src="Airefy.js"></script>
+</body>
+
+</html>

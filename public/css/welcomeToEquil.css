@@ -1,0 +1,159 @@
+/* Global Styles */
+:root {
+    --color-primary: #34D399; /* Bright Green */
+    --color-text-dark: #1F2937;
+    --color-text-light: #4B5563;
+    --color-background-soft: #F3F4F6;
+    --color-white: #ffffff;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--color-background-soft);
+}
+
+/* App Container (Simulates Phone Screen) */
+.app-container {
+    width: 100%;
+    max-width: 400px; /* Max width for a mobile device view */
+    height: 100vh;
+    max-height: 1000px;
+    background-color: var(--color-white);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Header/Title Bar */
+.app-header {
+    padding: 1rem 1.5rem 0;
+    color: var(--color-text-light);
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+/* Main Onboarding Card */
+.onboarding-card {
+    flex-grow: 1;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+/* Image Section Styling */
+.image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* Ensures the image section takes up a good amount of space */
+    min-height: 250px; 
+}
+
+.image-ring {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background-color: rgba(52, 211, 153, 0.2); /* Light primary color wash */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 
+        0 0 15px rgba(52, 211, 153, 0.5), /* Subtle inner glow */
+        0 0 30px rgba(52, 211, 153, 0.3); /* Broader outer glow */
+}
+
+.main-image {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    border-radius: 50%; /* Keeps the image circular */
+    /* If you want the image border to perfectly match the original: */
+    border: 8px solid var(--color-primary); 
+    box-sizing: border-box;
+}
+
+/* Text Content */
+.text-content {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.text-content h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin: 0 0 0.5rem 0;
+}
+
+.text-content p {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+    line-height: 1.5;
+    padding: 0 1.5rem;
+}
+
+/* Pagination Dots */
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+}
+
+.dot {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #D1D5DB; /* Gray inactive */
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: var(--color-primary); /* Active primary color */
+}
+
+/* Action Area (Buttons) */
+.action-area {
+    width: 100%;
+    padding-bottom: 2rem;
+}
+
+.continue-button {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(52, 211, 153, 0.4);
+}
+
+.continue-button:hover {
+    background-color: #10B981; /* Darker green on hover */
+}
+
+.skip-link {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    text-decoration: none;
+    font-weight: 600;
+}

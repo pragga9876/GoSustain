@@ -1,0 +1,103 @@
+/* --- UPDATED CSS --- */
+
+/* Remove conflicting body styles - let boilerplate handle this */
+
+/* App container integrated with main app layout */
+.app-container {
+  /* Integrate with main app layout */
+  max-width: 100%;
+  min-height: auto;
+  width: 100%;
+  margin: 0;
+  box-shadow: none;
+  
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  overflow: visible;
+  padding: 0 1rem;
+}
+
+/* ... rest of your existing CSS ... */
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.close-icon {
+  font-size: 1.25rem;
+  color: #000;
+  cursor: pointer;
+}
+
+/* Main content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1rem 0 2rem;
+  text-align: center;
+  color: var(--color-text-body, #1F2937);
+}
+
+.content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-header, #1F2937);
+}
+
+/* Image styling */
+.hero-image {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+/* Description text */
+.description {
+  font-size: 1rem;
+  color: var(--color-text-muted, #374151);
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+/* Button styling */
+.start-btn {
+  width: 100%;
+  background-color:var(--color-primary);
+  border: none;
+  color: var(--color-background-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.start-btn:hover {
+  filter: brightness(0.95);
+}
+
+/* Professional spacing adjustments */
+.hero-image {
+  margin-bottom: 2rem;
+}
+
+.content {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Close icon styling */
+.close-icon {
+  color: var(--color-text-body, #000);
+}
+

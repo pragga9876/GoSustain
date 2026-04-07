@@ -1,0 +1,299 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    /* CHANGED: Use variable and removed padding */
+    background-color: var(--color-bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.container {
+    width: 100%;
+    max-width: 420px;
+    height: 100vh; /* CHANGED: Fill height */
+    position: relative;
+    /* MOVED: Added padding here from content-card */
+    padding: 30px 24px; 
+    overflow-y: auto; /* Allow scrolling if content is long */
+}
+
+
+.back-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* CHANGED: Use variable */
+    color: var(--color-text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.back-button:hover {
+    transform: scale(1.1);
+}
+
+.back-button:active {
+    transform: scale(0.95);
+}
+
+.page-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 600;
+    /* CHANGED: Use variable */
+    margin-top: -40px;
+    color: var(--color-text-header);
+}
+
+.content-card {
+    /* REMOVED: background, border-radius, padding, box-shadow */
+    /* This is now just a layout wrapper */
+    width: 100%; 
+}
+
+.help-heading {
+    font-size: 28px;
+    font-weight: 700;
+    /* CHANGED: Use variable */
+    color: var(--color-text-header);
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* CHANGED: Use variable */
+    color: var(--color-primary);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    /* CHANGED: Use variable */
+    border: 1px solid var(--color-card-border);
+    border-radius: 10px;
+    font-size: 14px;
+    /* CHANGED: Use variable */
+    color: var(--color-text-header);
+    background-color: var(--color-bg); /* Use page bg */
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.search-input::placeholder {
+    /* CHANGED: Use variable */
+    color: var(--color-text-muted);
+}
+
+.search-input:focus {
+    outline: none;
+    /* CHANGED: Use variable */
+    border-color: var(--color-primary);
+    background-color: var(--color-card-bg); /* Use card bg on focus */
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.support-card {
+    /* CHANGED: Use variable */
+    background: var(--color-card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* CHANGED: Use variable */
+    border: 1px solid var(--color-card-border);
+}
+
+.support-card:hover {
+    /* CHANGED: Use variable */
+    background: var(--hover-card-bg);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Kept this subtle shadow */
+}
+
+.support-card:active {
+    transform: translateY(-2px);
+}
+
+.card-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+    height: 40px;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    /* CHANGED: Use variable */
+    color: var(--color-text-header);
+    margin-bottom: 4px;
+}
+
+.card-description {
+    font-size: 12px;
+    /* CHANGED: Use variable */
+    color: var(--color-text-body);
+}
+
+.contact-support {
+    text-align: center;
+    padding-top: 20px;
+    /* CHANGED: Use variable */
+    border-top: 1px solid var(--color-card-border);
+}
+
+.contact-link {
+    /* CHANGED: Use variable */
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.contact-link:hover {
+    opacity: 0.8;
+}
+
+/* Responsive Design (no dark mode changes needed here) */
+@media (max-width: 480px) {
+    body {
+        /* REMOVED padding */
+    }
+    
+    .container {
+         padding: 24px 16px; /* Use container for padding */
+    }
+
+    .content-card {
+        padding: 0; /* Removed padding */
+    }
+
+    .help-heading {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .page-title {
+        font-size: 18px;
+    }
+
+    .search-input {
+        font-size: 13px;
+        padding: 10px 14px 10px 36px;
+    }
+
+    .search-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .cards-grid {
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .support-card {
+        padding: 16px 12px;
+    }
+
+    .card-icon {
+        height: 36px;
+    }
+
+    .card-title {
+        font-size: 14px;
+    }
+
+    .card-description {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+         padding: 20px 12px; /* Use container for padding */
+    }
+    
+    .content-card {
+        padding: 0; /* Removed padding */
+    }
+
+    .help-heading {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    .search-input {
+        font-size: 12px;
+        padding: 9px 12px 9px 34px;
+    }
+
+    .cards-grid {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .support-card {
+        padding: 14px 10px;
+    }
+
+    .card-title {
+        font-size: 13px;
+    }
+
+    .card-description {
+        font-size: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 480px;
+        padding: 40px 32px; /* Use container for padding */
+    }
+
+    .content-card {
+        padding: 0; /* Removed padding */
+    }
+
+    .help-heading {
+        font-size: 32px;
+    }
+
+    .cards-grid {
+        gap: 20px;
+    }
+}

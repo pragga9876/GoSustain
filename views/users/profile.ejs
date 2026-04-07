@@ -1,0 +1,114 @@
+<% pageCSS = ["profile"]; %>
+
+<div class="profile-container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-button" onclick="window.history.back()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <h1 class="page-title">My Profile</h1>
+  </div>
+
+  <div class="profile-card">
+
+    <!-- STATS SECTION -->
+    <div class="stats-section">
+      <h2 class="stats-title">Stats</h2>
+      <div class="stats-grid">
+
+        <!-- Joined Date -->
+        <div class="stat-item">
+          <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <p class="stat-text">Joined: <%= currentUser && currentUser.createdAt ? new Date(currentUser.createdAt).toDateString() : "N/A" %></p>
+        </div>
+
+        <!-- CO₂ Saved -->
+        <div class="stat-item">
+          <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+          </div>
+          <p class="stat-text">CO₂ Saved: <%= totals && totals.saved ? totals.saved.toFixed(2) : "0.00" %> kg</p>
+        </div>
+
+        <!-- CO₂ Emitted -->
+        <div class="stat-item">
+          <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2">
+              <path d="M12 2v20M2 12h20"></path>
+            </svg>
+          </div>
+          <p class="stat-text">CO₂ Emitted: <%= totals && totals.emitted ? totals.emitted.toFixed(2) : "0.00" %> kg</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BADGES SECTION -->
+    <div class="badges-section">
+      <h3>Your Badges</h3>
+      <% if (user && user.badges && user.badges.length > 0) { %>
+        <div class="badges-grid">
+          <% user.badges.forEach(badge => { %>
+            <div class="badge-card">
+              <div class="badge-name"><%= badge.name %></div>
+              <div class="badge-desc"><%= badge.description %></div>
+              <div class="badge-date"><small>Earned: <%= badge.earnedAt ? new Date(badge.earnedAt).toLocaleDateString() : "Unknown" %></small></div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p>No badges yet — log activities to earn badges!</p>
+      <% } %>
+    </div>
+
+    <!-- STREAK SECTION -->
+    <div class="profile-streak">
+      <h3>🔥 Activity Streak</h3>
+      <% if (user && user.streak) { %>
+        <p>You have a <strong><%= user.streak.current %></strong>-day streak!</p>
+        <small>Last activity: <%= user.streak.lastActivityAt ? new Date(user.streak.lastActivityAt).toLocaleDateString() : "Never" %></small>
+      <% } else { %>
+        <p>You haven't started a streak yet. Log activities daily to build your streak!</p>
+      <% } %>
+    </div>
+
+    <!-- PROFILE FORM -->
+    <div class="form-section">
+      <form action="/profile" method="POST">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" name="name" value="<%= user ? user.name : '' %>" placeholder="Enter your name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" value="<%= user ? user.email : '' %>" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-input" name="location" value="<%= user && user.location ? user.location : '' %>" placeholder="Enter your location">
+        </div>
+
+        <div class="button-section">
+          <button type="submit" class="btn-primary">Save Changes</button>
+          <a href="/logout" class="btn-secondary">Log Out</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

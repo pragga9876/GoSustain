@@ -1,0 +1,60 @@
+
+<% pageCSS = ["activity"]; %>
+
+<div class="activity-container">
+  <div class="activity-card">
+    <h2 class="title">Add New Activity 🌱</h2>
+    <p class="subtitle">Track your daily habits and their carbon impact</p>
+
+    <form method="POST" action="/activities">
+      <label for="type">Activity Type:</label>
+      <select name="type" id="typeSelect" onchange="toggleForms()" required>
+        <option value="travel">Travel</option>
+        <option value="energy">Energy</option>
+        <option value="diet">Diet</option>
+      </select>
+
+      <!-- Travel -->
+      <div id="travelForm">
+        <label>Mode of Travel:</label>
+        <select name="mode">
+          <option value="car">Car</option>
+          <option value="bus">Bus</option>
+          <option value="train">Train</option>
+          <option value="bike">Bike</option>
+          <option value="walk">Walk</option>
+        </select>
+
+        <label>Distance (km):</label>
+        <input type="number" name="distance" placeholder="Enter distance" min="0">
+      </div>
+
+      <!-- Energy -->
+      <div id="energyForm" style="display:none;">
+        <label>Electricity Used (kWh):</label>
+        <input type="number" name="kwh" placeholder="Enter kWh used" min="0">
+      </div>
+
+      <!-- Diet -->
+      <div id="dietForm" style="display:none;">
+        <label>Diet Type:</label>
+        <select name="dietType">
+          <option value="nonveg">Non-Veg</option>
+          <option value="vegetarian">Vegetarian</option>
+          <option value="vegan">Vegan</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">Add Activity</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function toggleForms() {
+  const type = document.getElementById('typeSelect').value;
+  document.getElementById('travelForm').style.display = type === 'travel' ? 'block' : 'none';
+  document.getElementById('energyForm').style.display = type === 'energy' ? 'block' : 'none';
+  document.getElementById('dietForm').style.display = type === 'diet' ? 'block' : 'none';
+}
+</script>

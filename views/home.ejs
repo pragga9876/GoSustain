@@ -1,0 +1,142 @@
+
+<% pageCSS = ["home"]; %>
+<!-- 🌿 Custom Navbar and Sidebar for Home Page -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+
+<!-- 🌍 Home Page Body -->
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1 class="header-title">Welcome, <%= currentUser ? currentUser.name : "User" %>!</h1>
+    
+  </header>
+
+  <main class="dashboard-main">
+    <section class="hero-card">
+      <div class="hero-bg-image"></div>
+      <div class="hero-content">
+        <h2 class="hero-title">Your Complete Eco-System for Sustainable Living</h2>
+        <h5 class="hero-subtitle">You're taking the first step towards a greener lifestyle. Log your first activity to begin.</h5>
+
+        <% if (!currentUser) { %>
+          <a href="/welcome" class="button-primary aj">Start Yo`ur Journey</a>
+        <% } else { %>
+          <a href="/calculator/result" class="button-primary aj">Go to insights</a>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- Discover Tools -->
+    <section>
+      <h3 class="section-title">Discover Tools</h3>
+      <div class="tools-grid">
+        <div class="tool-card"><a href="/airefy" class=" aj"><span class="material-icons-outlined icon-blue">air</span><span class="tool-name">Airefy</span></a></div>
+        <div class="tool-card"><a href="/lca" class="aj"><span class="material-icons-outlined icon-green">delete_outline</span><span class="tool-name">LCA</span></a></div>
+        <div class="tool-card"><span class="material-icons-outlined icon-orange">shopping_basket</span><span class="tool-name">Local Harvest</span></div>
+        <div class="tool-card"><span class="material-icons-outlined icon-indigo">directions_car</span><span class="tool-name">Green Lane</span></div>
+      </div>
+    </section>
+
+    <!-- Why Equil -->
+    <section>
+      <h3 class="section-title">Why Equil is Exceptional</h3>
+      <div class="why-grid">
+        <div class="why-card"><span class="material-icons-outlined icon-blue">shield</span><span class="why-name">Privacy First</span></div>
+        <div class="why-card"><span class="material-icons-outlined icon-red">favorite_border</span><span class="why-name">Community Driven</span></div>
+        <div class="why-card"><span class="material-icons-outlined icon-purple">gamepad</span><span class="why-name">Gamified Experience</span></div>
+      </div>
+    </section>
+
+    <!-- How it Works -->
+    <section>
+      <div class="toggle-card" id="how-it-works-toggle" role="button" aria-expanded="false" aria-controls="how-it-works-section">
+        <p class="toggle-question">How Equil Works</p>
+        <span class="material-icons-outlined toggle-icon">expand_more</span>
+      </div>
+    </section>
+
+    <section class="how-it-works-section collapsible-section" id="how-it-works-section">
+      <div class="collapsible-content">
+        <h3 class="section-title">How Equil Works</h3>
+        <div class="timeline-container">
+          <div class="timeline-path-line"></div>
+          <div class="timeline-items-wrapper">
+            <div class="timeline-item">
+              <div class="timeline-number" style="--number-bg: #3b82f6;">1</div>
+              <div class="timeline-card">
+                <span class="material-icons-outlined" style="color: #3b82f6;">person_add</span>
+                <span class="timeline-text">Sign Up & Personalize</span>
+              </div>
+            </div>
+            <div class="timeline-item timeline-item-right">
+              <div class="timeline-number" style="--number-bg: #3b82f6;">2</div>
+              <div class="timeline-card timeline-card-right">
+                <span class="timeline-text">Track Daily Activities</span>
+                <span class="material-icons-outlined" style="color: #3b82f6;">edit_note</span>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-number" style="--number-bg: #22c55e;">3</div>
+              <div class="timeline-card">
+                <span class="material-icons-outlined" style="color: #22c55e;">calculate</span>
+                <span class="timeline-text">Carbon Footprint Calculation</span>
+              </div>
+            </div>
+            <div class="timeline-item timeline-item-right">
+              <div class="timeline-number" style="--number-bg: #22c55e;">4</div>
+              <div class="timeline-card timeline-card-right">
+                <span class="timeline-text">AI-Powered Insights</span>
+                <span class="material-icons-outlined" style="color: #22c55e;">psychology</span>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-number" style="--number-bg: #3b82f6;">5</div>
+              <div class="timeline-card">
+                <span class="material-icons-outlined" style="color: #3b82f6;">groups</span>
+                <span class="timeline-text">Discover Eco Communities</span>
+              </div>
+            </div>
+            <div class="timeline-item timeline-item-right">
+              <div class="timeline-number" style="--number-bg: #8b5cf6;">6</div>
+              <div class="timeline-card timeline-card-right">
+                <span class="timeline-text">Get Life cycle Analysis</span>
+                <span class="material-icons-outlined" style="color: #8b5cf6;">recycling</span>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-number" style="--number-bg: #06b6d4;">7</div>
+              <div class="timeline-card">
+                <span class="material-icons-outlined" style="color: #06b6d4;">air</span>
+                <span class="timeline-text">Get AQI of your Location</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section>
+      <h3 class="section-title">Frequently Asked Questions</h3>
+      <div class="faq-card">
+        <p class="faq-question">How does Equil help me live more sustainably?</p>
+        <a class="faq-link" href="/faq">View all FAQs</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Floating Elements -->
+<div class="floating-elements-container">
+  <span class="floating-leaf"></span><span class="floating-leaf"></span><span class="floating-leaf"></span>
+  <span class="floating-leaf"></span><span class="floating-leaf"></span><span class="floating-leaf"></span>
+  <span class="floating-leaf"></span>
+  <span class="floating-particle"></span><span class="floating-particle"></span><span class="floating-particle"></span>
+  <span class="floating-particle"></span><span class="floating-particle"></span><span class="floating-particle"></span>
+  <span class="floating-particle"></span><span class="floating-particle"></span>
+</div>
+
+<!-- JS -->
+<script src="/js/home.js"></script>
+
+

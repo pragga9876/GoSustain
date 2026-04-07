@@ -1,0 +1,80 @@
+<% pageCSS = ["qr"]; %>
+
+<section class="scan-container">
+  <h2>📷 Scan QR Code</h2>
+  <p>Allow camera access or upload a QR code image.</p>
+
+  <!-- Camera preview -->
+  <video id="preview" width="300" height="300" style="border: 2px solid #22c55e; border-radius: 12px;"></video>
+  <p id="status">Waiting for QR code...</p>
+
+  <hr>
+
+  <!-- Fallback: Upload QR image -->
+  <h3>Upload QR Code (Desktop fallback)</h3>
+  <input type="file" id="qrUpload" accept="image/*">
+</section>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
+  const status = document.getElementById("status");
+
+  // Success handler
+  function handleDecoded(decodedText) {
+    fetch("/scan-activity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qrData: decodedText })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success){
+        status.textContent = data.message;
+        status.style.color = "#22c55e";
+      } else {
+        status.textContent = data.error;
+        status.style.color = "#ef4444";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      status.textContent = "Something went wrong";
+      status.style.color = "#ef4444";
+    });
+  }
+
+  // Camera scanner
+  const html5QrcodeScanner = new Html5Qrcode("preview");
+  html5QrcodeScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    handleDecoded,
+    errorMessage => { /* ignore scan errors */ }
+  ).catch(err => {
+    console.warn("Camera not accessible, fallback to upload");
+    status.textContent = "Camera not accessible. Use image upload below.";
+    status.style.color = "#64748b";
+  });
+
+  // Image upload fallback
+  document.getElementById("qrUpload").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function() {
+      const dataUrl = reader.result;
+      Html5Qrcode.getCameras().then(cameras => {
+        // Use html5-qrcode to decode image
+        Html5Qrcode.scanFileV2(file, true)
+          .then(decodedText => handleDecoded(decodedText))
+          .catch(err => {
+            console.error(err);
+            status.textContent = "Failed to decode QR from image.";
+            status.style.color = "#ef4444";
+          });
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+</script>

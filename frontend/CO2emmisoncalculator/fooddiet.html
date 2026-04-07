@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food and Diet</title>
+
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="fooddiet.css" />
+
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+</head>
+
+<body>
+  <div class="design-root">
+    <div>
+      <header class="app-header">
+        <div class="icon-wrapper">
+
+        </div>
+        <h2>Food and Diet</h2>
+      </header>
+
+      <div class="progress-bar">
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+      </div>
+
+      <div class="content-section">
+        <div class="card">
+          <div class="card-image"
+            style='background-image: url("https://i.postimg.cc/4yGC61Y7/Gemini_Generated_Image_5w9g005w9g005w9g.png");'>
+          </div>
+          <div class="card-content">
+            <h3>Food & Diet</h3>
+            <p class="subtitle">
+              Tell us about your eating habits to estimate your food-related
+              carbon footprint.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <p class="label-text">Diet Type</p>
+          <select>
+            <option value="" disabled selected>Select diet type</option>
+
+            <option value="omnivore">🥩🥦 Omnivore</option>
+            <option value="vegetarian">🥗 Vegetarian</option>
+            <option value="vegan">🌿 Vegan</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <select>
+            <option value="" disabled selected>Meat Consumption</option>
+            <option value="Daily">Select frequency</option>
+            <option value="Several Times a week">two</option>
+            <option value="rarely">three</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <p class="label-text">Local Food Percentage</p>
+          <div class="slider-group">
+            <input type="range" min="0" max="100" value="50" id="localFoodRange">
+            <span id="localFoodValue">50%</span>
+          </div>
+        </label>
+      </div>
+
+
+
+
+
+      <div class="button-container-wrapper">
+        <div class="button-container">
+
+          <a href="homeEnergy.html">
+            <button class="btn btn-secondary">
+              <span>Previous</span>
+            </button>
+          </a>
+
+          <a href="wasterecycleinput.html">
+            <button class="btn btn-primary">
+              <span>Next</span>
+            </button>
+          </a>
+
+        </div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+  </div>
+
+  <script src="theme.js"></script>
+  <script>
+    // --- PAGE-SPECIFIC LOGIC ---
+
+    // Back button
+    document.querySelector('.icon-wrapper').addEventListener('click', () => {
+      window.history.back();
+    });
+
+    // --- SLIDER LOGIC ---
+    function updateSlider(sliderElement, valueElement) {
+      const value = sliderElement.value;
+      const min = sliderElement.min || 0;
+      const max = sliderElement.max || 100; // Max is 100 for percentage
+      const percent = ((value - min) / (max - min)) * 100;
+
+      // 1. Update the number text
+      valueElement.textContent = value + '%'; // Suffix is %
+
+      // 2. Update the CSS variable for the track background gradient
+      sliderElement.style.setProperty('--value-percent', `${percent}%`);
+    }
+
+    // Get elements by ID
+    const localFoodRange = document.getElementById('localFoodRange');
+    const localFoodValue = document.getElementById('localFoodValue');
+
+    // Add listener to new slider
+    if (localFoodRange) {
+      localFoodRange.addEventListener('input', () => {
+        updateSlider(localFoodRange, localFoodValue);
+      });
+    }
+
+    // Run on page load to set initial slider position
+    document.addEventListener('DOMContentLoaded', () => {
+      if (localFoodRange) {
+        updateSlider(localFoodRange, localFoodValue);
+      }
+    });
+    // --- END OF SLIDER LOGIC ---
+  </script>
+</body>
+
+</html>

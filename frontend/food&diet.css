@@ -1,0 +1,224 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body, html {
+  height: 100%;
+  background: #F8FFF5;
+  overflow-x: hidden;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* ---------- HEADER ---------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.back-arrow {
+  font-size: 22px;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.back-arrow:active {
+  transform: scale(0.9);
+}
+
+/* ---------- PROGRESS DOTS ---------- */
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #D3E5D3;
+  border-radius: 50%;
+  margin: 0 4px;
+  transition: background 0.3s ease;
+}
+
+.dot.active {
+  background: #75E06A;
+}
+
+/* ---------- MAIN CONTENT ---------- */
+.content {
+  flex-grow: 1;
+  padding: 16px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.hero-image {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+.hero-image:hover {
+  transform: scale(1.02);
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+p {
+  color: #6ca46a;
+  font-size: 15px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* ---------- INPUTS ---------- */
+.input-section label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+.select-box {
+  position: relative;
+  margin-bottom: 18px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.select-box:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.select-box select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #EAF6E6;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.select-box select:hover {
+  background: #def3dc;
+}
+
+/* Custom green arrow */
+.select-box::after {
+  content: "⌄";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #56C662;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+/* ---------- SLIDER ---------- */
+.slider-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 4px;
+  background: #D3EFD3;
+  outline: none;
+  accent-color: #60E060;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+input[type="range"]:active {
+  transform: scaleY(1.1);
+}
+
+#localValue {
+  float: right;
+  color: #555;
+  font-size: 14px;
+}
+
+/* ---------- TEXTS ---------- */
+.live-preview {
+  margin-top: 20px;
+  font-weight: 700;
+  color: #000;
+}
+
+/* ---------- BUTTONS ---------- */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.prev-btn, .next-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.prev-btn {
+  background: #EAF6E6;
+  color: #222;
+}
+.prev-btn:active {
+  background: #d9efdb;
+  transform: scale(0.96);
+}
+
+.next-btn {
+  background: #75E06A;
+  color: #fff;
+}
+.next-btn:active {
+  background: #68d15f;
+  transform: scale(0.96);
+}
+
+/* Remove dropdown arrow from all select boxes */
+select {
+  -webkit-appearance: none; /* For Safari and Chrome */
+  -moz-appearance: none;    /* For Firefox */
+  appearance: none;         /* For other browsers */
+  background-image: none !important;
+  background: #EAF6E6;
+  border: none;
+}
+
+/* Remove the custom arrow (::after) if you added one */
+.select-box::after {
+  display: none !important;
+}

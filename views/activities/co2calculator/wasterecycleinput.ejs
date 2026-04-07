@@ -1,0 +1,119 @@
+<% pageCSS = ["theme", "wasterecycleinput"]; %>
+
+
+<form id="wasteForm" action="/calculator/wasterecycle" method="POST">
+<div class="design-root">
+
+    <div class="main-content">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="icon-wrapper"></div>
+            <h2 class="header-title">Waste and Recycling</h2>
+        </header>
+
+        <!-- PROGRESS -->
+        <div class="progress-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot active"></div>
+        </div>
+
+        <!-- IMAGE -->
+        <div class="image-container-wrapper">
+            <div class="image-container">
+                <div class="hero-image"
+                    style='background-image: url("/images/wasterecycleimg.png");'>
+                </div>
+            </div>
+        </div>
+
+<br>
+
+        
+        
+        <p class="page-description">
+            Tell us about your waste and recycling habits.
+        </p>
+
+        <!-- SLIDER -->
+        <div class="slider-container-wrapper">
+            <div class="slider-container">
+                <div class="slider-labels">
+                    <p class="slider-label">Weekly Waste Production (kg)</p>
+                </div>
+
+                <div class="slider-track-container">
+                    <!-- TRACK -->
+                    <div class="slider-track">
+                        <div class="slider-progress" style="width: 32%;"></div>
+                        <div class="slider-thumb" style="left: 32%;"></div>
+                    </div>
+
+                    <!-- VALUE -->
+                    <div class="slider-value-desktop">32 kg</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HIDDEN INPUT (actual KG value) -->
+        <input type="hidden" id="wasteKgInput" name="weeklyWasteKg" value="32">
+
+        <!-- RECYCLE TOGGLE -->
+        <div class="toggle-item">
+            <p class="toggle-label">Do you recycle regularly?</p>
+            <div class="toggle-switch-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="recycleToggle" class="toggle-checkbox">
+                    <div class="toggle-handle"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- HIDDEN -->
+        <input type="hidden" id="recycleInput" name="recycle" value="no">
+
+        <!-- COMPOST TOGGLE -->
+        <div class="toggle-item">
+            <p class="toggle-label">Do you compost food waste?</p>
+            <div class="toggle-switch-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="compostToggle" class="toggle-checkbox">
+                    <div class="toggle-handle"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- HIDDEN -->
+        <input type="hidden" id="compostInput" name="compost" value="no">
+
+    </div> <!-- main-content END -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="button-group">
+
+                <!-- Previous -->
+                <a href="/calculator/fooddiet">
+                    <button type="button" class="button button-previous">
+                        <span>Previous</span>
+                    </button>
+                </a>
+
+                <!-- View Results submits form -->
+                <button type="button" class="button button-next">
+                    <span>View Results</span>
+                </button>
+
+            </div>
+        </div>
+        <div class="footer-spacer"></div>
+    </footer>
+
+</div> <!-- design-root END -->
+</form>
+
+<script src="/js/theme.js"></script>
+<script src="/js/watercycleinput.js"></script>

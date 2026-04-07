@@ -1,0 +1,47 @@
+
+<% pageCSS = ["auth"]; %>
+
+<div class="auth-page">
+  <div class="signin-container">
+    <div class="header"></div>
+
+    <div class="content">
+      <h1 class="welcome-title">Welcome Back, Eco-Warrior!</h1>
+
+      <!-- Passport login form -->
+      <form class="signin-form" action="/login" method="POST">
+        
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          placeholder="Enter your email" 
+          required
+        >
+
+        <label for="password">Password</label>
+        <div class="password-input-group">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Enter your password" 
+            required
+          >
+          <span class="password-toggle"><i class="fas fa-eye"></i></span>
+        </div>
+
+        <div class="forgot-password-container">
+          <a href="#" class="forgot-password-link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="sign-in-btn">Sign In</button>
+      </form>
+
+      <p class="signup-prompt">
+        New to Equil? <a href="/register" class="signup-link">Sign Up</a>
+      </p>
+    </div>
+  </div>
+</div>

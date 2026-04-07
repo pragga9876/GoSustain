@@ -1,0 +1,118 @@
+<% pageCSS = ["marketStats"]; %>
+
+<div class="redeem-stats-container">
+  <header class="redeem-header">
+    <h1>Redeem Analytics</h1>
+    <p>Track your EcoPoints journey 🌱</p>
+  </header>
+
+  <!-- Summary cards -->
+  <section class="summary-cards">
+    <div class="summary-card">
+      <h3>Total Earned</h3>
+      <p class="value earned">+<%= earned %> pts</p>
+    </div>
+    <div class="summary-card">
+      <h3>Total Redeemed</h3>
+      <p class="value redeemed">-<%= redeemed %> pts</p>
+    </div>
+    <div class="summary-card">
+      <h3>Balance</h3>
+      <p class="value balance"><%= earned - redeemed %> pts</p>
+    </div>
+  </section>
+
+  <!-- Newly Earned Badges -->
+  <% if(currentUser && currentUser.badges && currentUser.badges.length > 0) { %>
+    <section class="new-badges-section">
+      <h2>🏅 Your Badges</h2>
+      <div class="badges-grid">
+        <% currentUser.badges.forEach(badge => { %>
+          <div class="badge-item <%= badge.earnedAt ? 'earned' : 'locked' %>">
+            <span class="badge-icon"><%= badge.icon || "🏆" %></span>
+            <div class="badge-info">
+              <div class="badge-name"><%= badge.name %></div>
+              <div class="badge-desc"><%= badge.description %></div>
+              <% if(badge.earnedAt) { %>
+                <div class="badge-earned-date">Earned on <%= badge.earnedAt.toDateString() %></div>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- Certificates Section -->
+ <!-- Certificates Section -->
+<% if (tx && tx.length > 0) { %>
+  <section class="certificates-section">
+    <h2>🎖️ Your Certificates</h2>
+    <div class="certificates-grid">
+      <% tx.filter(t => t.type === 'redeem').forEach(t => { %>
+        <a href="/certificate/:id" class="cert-btn" target="_blank">
+          📄 <%= t.name %> Certificate
+        </a>
+      <% }) %>
+    </div>
+  </section>
+<% } %>
+
+
+  <!-- Chart -->
+  <section class="chart-section">
+    <canvas id="redeemChart"></canvas>
+    <div class="legend">
+      <span class="earned-dot"></span> Earned
+      <span class="redeemed-dot"></span> Redeemed
+    </div>
+  </section>
+
+  <!-- Button -->
+  <section class="btn-section">
+    <a href="/market" class="btn-primary">Go to Marketplace</a>
+  </section>
+
+  <!-- Transaction list -->
+  <section class="transactions">
+    <h2>Recent Transactions</h2>
+    <% if (tx && tx.length > 0) { %>
+      <ul class="tx-list">
+        <% tx.forEach(t => { %>
+          <li class="tx-item">
+            <div class="tx-info">
+              <h4><%= t.name %></h4>
+              <span class="tx-date"><%= t.date.toDateString() %></span>
+            </div>
+            <div class="tx-points <%= t.type === 'redeem' ? 'redeem' : 'earn' %>">
+              <%= t.type === 'redeem' ? '-' : '+' %><%= t.points %> pts
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="no-tx">No transactions yet.</p>
+    <% } %>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('redeemChart');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Earned', 'Redeemed'],
+      datasets: [{
+        data: [<%= earned %>, <%= redeemed %>],
+        backgroundColor: ['#22c55e', '#ef4444'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      cutout: '70%',
+      responsive: true
+    }
+  });
+</script>

@@ -1,0 +1,42 @@
+<% pageCSS = ['quizResult.css']; %>
+
+<section class="quiz-result-container">
+  <h2>Quiz Results</h2>
+  <p class="summary">You scored <strong><%= correctCount %> / <%= total %></strong> (<strong><%= scorePercent.toFixed(0) %>%</strong>). Points earned: <strong><%= pointsEarned %></strong></p>
+
+  <% if (updatedUser) { %>
+    <p>Your new points balance: <strong><%= updatedUser.points %></strong></p>
+    <% if (updatedUser.badges && updatedUser.badges.length) { %>
+      <p>You have <strong><%= updatedUser.badges.length %></strong> badge(s). Check your profile to view them.</p>
+    <% } %>
+  <% } else if (!currentUser) { %>
+    <p><em>Log in next time to save points to your account.</em></p>
+  <% } %>
+
+  <div class="answers-list">
+    <% details.forEach(function(d, idx) { %>
+      <div class="answer-card <%= d.isCorrect ? 'correct' : 'wrong' %>">
+        <div class="answer-q"><strong>Q<%= idx+1 %>:</strong> <%= d.question %> <small>(<%= d.difficulty %>)</small></div>
+        <div class="answer-options">
+          <% d.options.forEach(function(opt, i) { %>
+            <div class="opt-row <%= i === d.correct ? 'correct-opt' : '' %> <%= (d.selected === i) ? 'selected-opt' : '' %>">
+              <span><%= opt.text %></span>
+              <% if (i === d.correct) { %><span class="badge">Correct</span><% } %>
+              <% if (i === d.selected && i !== d.correct) { %><span class="badge-wrong">Your choice</span><% } %>
+            </div>
+          <% }) %>
+        </div>
+        <% if (d.explanation) { %>
+          <div class="explain"><strong>Why:</strong> <%= d.explanation %></div>
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="back-actions">
+    <a href="/quiz" class="btn-outline">Try another quiz (tomorrow)</a>
+    <a href="/dashboard" class="btn-primary">Go to Dashboard</a>
+  </div>
+</section>
+
+

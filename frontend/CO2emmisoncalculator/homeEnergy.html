@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Home Energy</title>
+
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="homeEnergy.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="app-container">
+
+    <header class="header">
+
+      <h2>Home Energy</h2>
+    </header>
+
+    <div class="progress-dots">
+      <span class="dot"></span>
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+
+    <main class="content">
+
+      <div class="card">
+        <img src="home energy.png" alt="House" class="hero-image" />
+      </div>
+      <h3>Home Energy Usage</h3>
+      <p>Estimate your home's energy consumption to calculate your carbon footprint.</p>
+
+      <div class="section">
+        <label>Monthly Electricity Usage (kWh)</label>
+        <div class="slider-group">
+          <input type="range" min="0" max="1000" value="150" id="electricityRange">
+          <span id="electricityValue">150 kWh</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Household Size</label>
+        <p class="subtext">Number of people living in your household</p>
+        <div class="counter">
+          <button id="decrease">−</button>
+          <span id="householdValue">2</span>
+          <button id="increase">+</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Energy Source</label>
+        <select>
+          <option>Select</option>
+          <option>☀️Renewable Energy</option>
+          <option>🔋Mixed Sources</option>
+          <option>🛢️Non-Renewable Energy</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <label>Main Heating Fuel</label>
+        <select>
+          <option>Select</option>
+          <option>🔌Electric</option>
+          <option>⛽️Gas</option>
+          <option>🪵Wood</option>
+        </select>
+      </div>
+
+      <div class="buttons">
+        <a href="travel&transportation.html">
+          <button class="prev">Previous</button>
+        </a>
+        <a href="fooddiet.html">
+          <button class="next">Next</button>
+        </a>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // --- 1. GLOBAL THEME LOGIC (from theme.js) ---
+    // This runs immediately on script load to prevent a "flash" of the wrong theme.
+
+    // 1. Get reference to the <html> element
+    const htmlElement = document.documentElement;
+
+    /**
+     * 2. Define the function to set the theme.
+     * @param {'light' | 'dark'} theme - The theme to set.
+     */
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        htmlElement.classList.remove('light');
+        htmlElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        htmlElement.classList.remove('dark');
+        htmlElement.classList.add('light');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // 3. Run on page load: Check for a saved theme in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      // Default to light theme if nothing is saved
+      setTheme('light');
+    }
+
+    // --- 2. PAGE-SPECIFIC LOGIC (from homeEnergy.html) ---
+    // This runs after the theme has been set.
+
+    // Back button
+    const backBtn = document.querySelector('.back-btn');
+    if (backBtn) { // This check prevents the crash
+      backBtn.addEventListener('click', () => {
+        window.history.back();
+      });
+    }
+      // --- SLIDER LOGIC ---
+      /**
+       * Helper function to update slider value text and CSS variable for the track fill.
+       */
+      function updateSlider(sliderElement, valueElement) {
+        const value = sliderElement.value;
+        const min = sliderElement.min || 0;
+        const max = sliderElement.max || 1000; // Use max 1000 for this slider
+        const percent = ((value - min) / (max - min)) * 100;
+
+        // 1. Update the number text (keeping the " kWh" suffix)
+        valueElement.textContent = value + ' kWh';
+
+        // 2. Update the CSS variable for the track background gradient
+        sliderElement.style.setProperty('--value-percent', `${percent}%`);
+      }
+
+      // Electricity usage slider
+      const electricityRange = document.getElementById('electricityRange');
+      const electricityValue = document.getElementById('electricityValue');
+
+      electricityRange.addEventListener('input', () => {
+        updateSlider(electricityRange, electricityValue);
+      });
+
+      // Run on page load to set initial slider position
+      document.addEventListener('DOMContentLoaded', () => {
+        updateSlider(electricityRange, electricityValue);
+      });
+
+      // --- END OF SLIDER LOGIC ---
+
+      // Household size counter
+      const decrease = document.getElementById('decrease');
+      const increase = document.getElementById('increase');
+      const householdValue = document.getElementById('householdValue');
+      let count = 2;
+
+      decrease.addEventListener('click', () => {
+        if (count > 1) {
+          count--;
+          householdValue.textContent = count;
+        }
+      });
+
+      increase.addEventListener('click', () => {
+        count++;
+        householdValue.textContent = count;
+      });
+  </script>
+</body>
+
+</html>

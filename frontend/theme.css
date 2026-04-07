@@ -1,0 +1,65 @@
+/* --- Semantic Color Variables (for Light/Dark Mode) --- */
+:root {
+  /* Colors from Config */
+  --color-primary: #22c55e;
+  --color-background-light: #f8fafc;
+  --color-background-dark: #0f172a;
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-700: #334151;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-white: #ffffff;
+  --color-green-100: #dcfce7;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  /* For hover */
+  --color-blue-500: #3b82f6;
+  --color-orange-500: #f97316;
+  --color-indigo-500: #6366f1;
+  --color-red-500: #ef4444;
+  --color-purple-500: #8b5cf6;
+
+  /* Fonts */
+  --font-display: "Poppins", sans-serif;
+
+  /* Sizing & Spacing */
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --gap-4: 1rem;
+
+  /* Radius */
+  --radius-lg: 0.75rem;
+  /* rounded-lg */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+
+html.dark {
+    --color-bg: var(--color-background-dark);
+    --color-text-header: var(--color-slate-100);
+    --color-text-title: var(--color-slate-100);
+    --color-text-body: var(--color-slate-300);
+    --color-text-muted: var(--color-slate-400);
+    --color-text-on-primary: var(--color-white);
+    --color-card-bg: var(--color-slate-800);
+    --color-card-border: var(--color-slate-700);
+    --color-hero-bg: var(--color-slate-800);
+    --color-hero-text-header: var(--color-white);
+    --color-hero-text-body: var(--color-slate-300);
+    --hero-bg-opacity: 0.1;
+    --hover-card-bg: var(--color-slate-700);
+    --color-overlay-bg: rgba(0, 0, 0, 0.8);
+    --timeline-path-color: #334151;
+    --timeline-path-dash-image: none;
+}

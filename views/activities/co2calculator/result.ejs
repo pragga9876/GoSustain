@@ -1,0 +1,202 @@
+<% pageCSS = ["result"]; %>
+
+<div class="floating-particles" id="particles"></div>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h1 class="main-title">Your Carbon Footprint Result</h1>
+
+        <div class="header-decoration">
+           <svg class="floating-leaf" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+                </svg>
+                <svg class="floating-earth" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C19.92,6.59 22.92,12.06 21.39,17.9C20.85,19.5 19.5,20.85 17.9,21.39C12.06,22.92 6.59,19.92 4.59,15C2.59,10.08 5.59,4.61 10.5,2.61C11.6,2.2 12.8,2 14,2A10,10 0 0,1 24,12A10,10 0 0,1 17.9,17.39M9,12V14H7V12H9Z"/>
+                </svg>
+        </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="summary-cards">
+        <!-- Your Footprint Card -->
+        <div class="summary-card your-footprint">
+            <div class="card-icon">
+                 <svg class="pulse-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,2C13.1,2 14,2.9 14,4C14,5.3 13.3,6.3 12.4,6.7L12,7L11.6,6.7C10.7,6.3 10,5.3 10,4C10,2.9 10.9,2 12,2M21,9V7H15V9H21M21,11H15V13H21V11M21,15H15V17H21V15M13,17V15H9V17H13M13,13V11H9V13H13M13,9V7H9V9H13M7,7V9H3V7H7M7,11H3V13H7V11M7,15H3V17H7V15M8.5,18.5C9,19 9,20 8.5,20.5L12,24L15.5,20.5C16,20 16,19 15.5,18.5L12,15L8.5,18.5Z"/>
+                    </svg>
+            </div>
+            <div class="card-content">
+                <h3>Your Footprint</h3>
+                <div class="big-number" id="yourFootprintValue"><%= total?.toFixed(1) || 0 %></div>
+                <div class="unit">kg/week</div>
+            </div>
+        </div>
+
+        <!-- Global Average Card -->
+        <div class="summary-card global-average">
+            <div class="card-icon">
+               <svg class="rotate-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"/>
+                    </svg>
+            </div>
+            <div class="card-content">
+                <h3>Global Average</h3>
+                <div class="big-number"><%= globalAverage %></div>
+                <div class="unit">kg/week</div>
+            </div>
+        </div>
+
+        <!-- Comparison Status Card -->
+        <% 
+          const status = total < 50? "Low" : total <= 90? "Average" : "High";
+          const detail = total < 50? "Below Average" : total <= 90? "Near Global Average" : "Above Average";
+          const statusClass = status.toLowerCase(); // 'low', 'average', or 'high'
+        %>
+        <div class="summary-card comparison-result <%= statusClass %>" id="comparisonCard">
+            <div class="card-icon">
+               <svg class="bounce-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
+                    </svg>
+            </div>
+            <div class="card-content">
+                <h3>Your Status</h3>
+                <div class="status-text"><%= status %></div>
+                <div class="status-detail"><%= detail %></div>
+            </div>
+        </div>
+    </div>
+
+    
+        <div class="chart-section">
+            <h2 class="chart-title">
+                <span class="title-icon">📊</span>
+                Emissions Breakdown
+                <div class="title-decoration"></div>
+            </h2>
+            <div class="chart-container">
+                <canvas id="doughnutChart" width="240" height="240"></canvas>
+                <div class="chart-center-info">
+                    <div class="chart-center-value" id="chartCenterValue"><%= total?.toFixed(1) || 0 %></div>
+                    <div class="chart-center-unit">kg/week</div>
+                </div>
+            </div>
+            <div class="chart-legend" id="chartLegend">
+                </div>
+        </div>
+    <!-- CATEGORY GRID -->
+    <div class="category-grid">
+        <% for (let cat of ['travel','home','food','waste']) { 
+            const val = breakdown?.[cat] ?? 0; 
+            const displayName = cat === 'home' ? 'Energy' : cat.charAt(0).toUpperCase() + cat.slice(1); %>
+        <div class="category-card <%= cat %>">
+            <div class="category-name"><%= displayName %></div>
+            <div class="category-value"><%= val.toFixed(1) %></div>
+            <div class="category-percentage"><%= total ? ((val/total)*100).toFixed(0) : 0 %>%</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:<%= total ? ((val/total)*100).toFixed(0) : 0 %>%"></div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- STREAK -->
+    <% if (streak) { %>
+    <div class="streak-section">
+        <h2>🔥 Current Streak</h2>
+        <p>You have completed <strong><%= streak.current %></strong> consecutive eco-activities!</p>
+    </div>
+    <% } %>
+
+    <!-- BADGES -->
+    <div class="badges-section">
+        <h2>Your Eco Achievements</h2>
+        <div class="badges-grid">
+            <% badges?.forEach(badge => { %>
+                <div class="badge-item <%= badge.earned ? 'earned' : 'locked' %>">
+                    <span class="badge-icon"><%= badge.icon || "🏆" %></span>
+                    <div class="badge-info">
+                        <div class="badge-name"><%= badge.name %></div>
+                        <div class="badge-desc"><%= badge.description %></div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="insights-section">
+        <h2>AI Insights & Personalized Actions</h2>
+        <div class="insights-grid">
+            <% insights?.forEach(insight => { %>
+                <div class="insight-card">
+                    <div class="insight-icon"><%= insight.icon || "💡" %></div>
+                    <div class="insight-title"><%= insight.title %></div>
+                    <div class="insight-desc"><%= insight.description %></div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+</div>
+<div class="card" id="ecoTwinCard">
+  <h3>EcoTwin — Compare With Someone Like You</h3>
+
+  <div id="ecotwinResults">
+    Loading comparison...
+  </div>
+</div>
+<script src="/js/theme.js"></script>
+<script src="/js/result.js"></script>
+
+
+<script>
+async function loadEcoTwin(){
+  try {
+    const r = await fetch("/eco/api/ecotwin");
+    const j = await r.json();
+
+    if(!j.success){
+      document.getElementById("ecotwinResults").textContent = "No data available";
+      return;
+    }
+
+    const you = j.you.toFixed(1);
+    const ageAvg = j.compare.byAge;
+    const stateAvg = j.compare.byState;
+    const lifeAvg = j.compare.byLifestyle;
+
+    document.getElementById("ecotwinResults").innerHTML = `
+      <p><strong>Your weekly CO₂:</strong> ${you} kg</p>
+      <hr>
+      <p><strong>People like you:</strong></p>
+      <ul>
+        <li>Age group (${j.details.ageGroup}): <b>${ageAvg} kg</b></li>
+        <li>State (${j.details.state}): <b>${stateAvg} kg</b></li>
+        <li>Lifestyle (${j.details.lifestyle}): <b>${lifeAvg} kg</b></li>
+      </ul>
+
+      <h4>Summary</h4>
+      <p style="margin-top:6px;">
+        ${generateTwinMessage(you, ageAvg, stateAvg, lifeAvg)}
+      </p>
+    `;
+  } catch (err) {
+    document.getElementById("ecotwinResults").textContent = "Error loading EcoTwin";
+  }
+}
+
+// Small helper for message
+function generateTwinMessage(you, a, s, l){
+  const avg = (a + s + l) / 3;
+  if(you < avg * 0.8) return "🌱 You're doing better than most people like you! Keep it up!";
+  if(you <= avg * 1.2) return "🙂 You're around average. A few small improvements can make you a category leader!";
+  return "🔥 Your CO₂ is higher than your EcoTwin. Try reducing transport or electricity usage.";
+}
+
+document.addEventListener("DOMContentLoaded", loadEcoTwin);
+</script>
+
+
+

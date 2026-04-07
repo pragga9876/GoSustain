@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equil Sign In Screen</title>
+    <link rel="stylesheet" href="signIn.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="signin-container">
+        <div class="header">
+            <!-- <span class="screen-title">Equil Sign In Screen</span> -->
+        </div>
+
+        <div class="content">
+            <h1 class="welcome-title">Welcome Back, Eco-Warrior!</h1>
+
+            <form class="signin-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email">
+
+                <label for="password">Password</label>
+                <div class="password-input-group">
+                    <input type="password" id="password" placeholder="Enter your password">
+                    <span class="password-toggle"><i class="fas fa-eye"></i></span>
+                </div>
+                
+                <div class="forgot-password-container">
+                    <a href="#" class="forgot-password-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="sign-in-btn">Sign In</button>
+            </form>
+
+            <p class="signup-prompt">
+                New to Equil? <a href="signUp.html" class="signup-link">Sign Up</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

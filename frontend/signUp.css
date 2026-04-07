@@ -1,0 +1,179 @@
+/* General Reset and Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f0f0; /* Light background for the whole page */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Start from the top */
+    min-height: 100vh;
+    
+}
+
+.signup-container {
+    width: 100%;
+    max-width: 400px; /* Typical mobile screen width */
+    height: 100vh;
+   
+    background-color: #ffffff;
+    ;
+
+    overflow: hidden; /* Contains the children elements */
+}
+
+/* --- Header/Navigation Bar Styling --- */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 20px 25px 0 25px; /* Adjust padding to match visual spacing */
+}
+
+.back-arrow i {
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+}
+
+.screen-title {
+    font-size: 14px;
+    color: #555;
+    margin-left: 10px; /* Space between arrow and title */
+}
+
+/* --- Main Content Styling --- */
+.content {
+    padding: 0 25px 40px 25px;
+}
+
+.main-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+    margin-top: 25px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* --- Form Styling --- */
+.signup-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    margin-top: 20px; /* Space above each field group */
+}
+
+.signup-form input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.signup-form input::placeholder {
+    color: #aaa;
+}
+
+.signup-form input:focus {
+    border-color: #38c172; /* Focus color similar to the button */
+}
+
+/* Password Field Specific Styling */
+.password-input-group {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-group input {
+    padding-right: 40px; /* Make space for the icon */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.password-hint {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+/* --- Button Styling --- */
+.create-account-btn {
+    width: 100%;
+    padding: 15px 0;
+    background-color: #38c172; /* Green color from the image */
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+    text-decoration: none; 
+    text-align: center;    
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.create-account-btn:hover {
+    background-color: #32a862; /* Slightly darker green on hover */
+}
+
+/* --- Footer Link Styling --- */
+.terms-text {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+    margin-top: 30px;
+    line-height: 1.5;
+}
+
+.terms-text a, .signin-prompt a {
+    color: #38c172; /* Use the main green color for links */
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signin-prompt {
+    font-size: 14px;
+    color: #777;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.signin-prompt .signin-link {
+    font-size: 16px;
+}
+
+/* Specific styling for the Privacy/Terms links to match the lighter color in the image */
+.privacy-link, .terms-link {
+    color: #38c172; /* Lighter shade of green for specific links */
+}
+
+/* Optional: Center the entire container if the screen is much wider than max-width */
+@media (min-width: 600px) {
+    body {
+        align-items: center;
+    }
+}

@@ -1,0 +1,149 @@
+/* Global Styles - Keep them consistent */
+:root {
+    --color-primary: #34D399; /* Bright Green */
+    --color-text-dark: #1F2937;
+    --color-text-light: #4B5563;
+    --color-background-soft: #F3F4F6;
+    --color-white: #ffffff;
+    --color-light-green-bg: #E0FFE0; /* Very light green for the large circle */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--color-background-soft);
+}
+
+/* App Container (Simulates Phone Screen) */
+.app-container {
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    max-height: 1000px;
+    background-color: var(--color-white);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+   
+}
+
+/* Header/Title Bar */
+.app-header {
+    padding: 1rem 1.5rem 0;
+    color: var(--color-text-light);
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+/* Main Onboarding Card */
+.onboarding-card {
+    flex-grow: 1;
+    padding: 2rem 1.5rem 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+/* Image Section Styling for Eco-Tools */
+.image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 250px; 
+    margin-bottom: 2rem;
+}
+
+.image-ring-bg {
+    width: 250px; /* Adjust size as needed */
+    height: 250px;
+    border-radius: 50%;
+    background-color: var(--color-light-green-bg); /* Light green background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Ensure image stays within bounds */
+}
+
+.main-image {
+    width: 100%; /* Image fills its container */
+    height: 100%;
+    object-fit: contain; /* Ensure the whole image (icons) is visible */
+    border-radius: 50%; /* If your image is circular already, this helps */
+}
+
+/* Text Content */
+.text-content {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.text-content h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin: 0 0 0.5rem 0;
+}
+
+.text-content p {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+    line-height: 1.5;
+    padding: 0 1.5rem;
+}
+
+/* Pagination Dots */
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 3rem; /* More space before button */
+}
+
+.dot {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #D1D5DB; /* Gray inactive */
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: var(--color-primary); /* Active primary color */
+}
+
+/* Action Area (Buttons) */
+.action-area {
+    width: 100%;
+    padding: 0 1.5rem 2rem 1.5rem;
+}
+
+.start-journey-button {
+    width: 100%;
+    padding: 1rem;
+    background-color: #6abe5b; /* Neon Green - specific to this button in the image */
+    color: var(--color-white);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(52, 211, 153, 0.4);
+}
+
+.start-journey-button:hover {
+    background-color: #10B981; /* Darker neon green on hover */
+}

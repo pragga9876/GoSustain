@@ -1,0 +1,40 @@
+<svg width="230" height="60" viewBox="0 0 230 60" xmlns="http://www.w3.org/2000/svg">
+  <title>Equil Logo - Light Mode</title>
+  
+  <defs>
+    <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#9EFF00" flood-opacity="0.8" />
+    </filter>
+  </defs>
+  
+  <style>
+    .logo-text { 
+      font-family: 'Poppins', 'Montserrat', 'Helvetica Neue', sans-serif; 
+      font-size: 30px; 
+      font-weight: 600; 
+      fill: #333333; /* Charcoal */
+      letter-spacing: 0.5px;
+      /* Aligns text vertically to the center */
+      dominant-baseline: central;
+    }
+  </style>
+
+  <g id="logo">
+    
+    <g id="icon" transform="translate(30, 30)">
+    
+      <g fill="#9EFF00" filter="url(#neon-glow)">
+        <path d="M -18 -8 L -8 -15 L -2 -11 L -2 -5 L -8 2 L -18 -8 Z" />
+        <path d="M 18 -8 L 8 -15 L 2 -11 L 2 -5 L 8 2 L 18 -8 Z" />
+        <path d="M -8 15 L 8 15 L 2 8 L -2 8 L -8 15 Z" />
+      </g>
+      
+      <g fill="#333333">
+         <path d="M -10 -10 L 5 -10 L 5 -5 L -4 -5 L -4 2 L 2 2 L 2 -2 L -4 -2 L -4 5 L 5 5 L 5 10 L -10 10 Z" />
+      </g>
+    </g>
+    
+    <text x="70" y="30" class="logo-text">Equil</text>
+    
+  </g>
+</svg>

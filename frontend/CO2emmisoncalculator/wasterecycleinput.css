@@ -1,0 +1,455 @@
+/* --- Global Styles (Themed) --- */
+body {
+    margin: 0;
+    /* CHANGE: Set a background color for the area *outside* the phone view */
+    background-color: var(--color-gray-200, #e5e7eb); 
+    color: var(--color-text-body);
+    font-family: Inter, "Noto Sans", sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* --- Main Layout --- */
+.design-root {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+    justify-content: space-between;
+    overflow-x: hidden;
+
+    /* --- NEW STYLES FOR PHONE-LIKE CONTAINER --- */
+    /* 1. Constrain the width to a typical phone size */
+    max-width: 480px;
+    /* 2. Center the container horizontally on larger screens */
+    margin: 0 auto;
+    /* 3. Ensure the phone screen has its original background */
+    background-color: var(--color-green-50, #f0fdf4); 
+    /* 4. Optional: Add a subtle shadow for a framed effect */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+    /* --- END NEW STYLES --- */
+}
+
+.main-content {
+    flex-grow: 1;
+}
+
+/* --- Header --- */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-bg);
+    padding: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.icon-wrapper {
+    display: flex;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    color: var(--color-text-header);
+}
+
+.header-title {
+    flex-grow: 1;
+    text-align: center;
+    color: var(--color-text-header);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    padding-right: 3rem;
+    margin: 0;
+}
+
+/* --- Progress Dots --- */
+.progress-dots {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+}
+
+.dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: var(--color-slate-300);
+}
+
+.dot.active {
+    background-color: var(--color-primary);
+}
+
+/* --- Hero Image --- */
+.hero-image {
+    width: 90%;
+    min-height: 218px;
+    background-color: var(--color-bg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+/* --- Page Content --- */
+.page-title {
+    color: var(--color-text-title);
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    padding: 1.25rem 1rem 0.5rem 1rem;
+    text-align: left;
+    margin: 0;
+}
+
+.page-description {
+    color: var(--color-green-500);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 0.25rem 1rem 0.75rem 1rem;
+    margin: 0;
+}
+
+/* --- Slider --- */
+.slider-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.slider-labels {
+    display: flex;
+    width: 100%;
+    flex-shrink: 3;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.slider-label {
+    color: var(--color-text-body);
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.slider-value-mobile {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.slider-track-container {
+    display: flex;
+    width: 100%;
+    height: 1rem;
+    align-items: center;
+    gap: 1rem;
+}
+
+.slider-track {
+    position: relative;
+    height: 0.5rem;
+    flex-grow: 1;
+    border-radius: 0.25rem;
+    background-color: var(--color-card-border);
+    cursor: pointer;
+}
+
+.slider-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 0.125rem;
+    background-color: var(--color-primary);
+}
+
+.slider-thumb {
+    position: absolute;
+    top: 50%;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: white;
+    border: 4px solid var(--color-primary);
+    border-radius: 9999px;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: 0 0 0 0px rgba(59, 130, 246, 0.3);
+}
+
+.slider-value-desktop {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0;
+    margin-top: 1rem;
+    text-align: center;
+    display: block;
+}
+
+.slider-track:hover .slider-thumb {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.slider-thumb.is-dragging {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+/* --- Toggle Switches --- */
+.toggle-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background-color: var(--color-bg);
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-height: 3.5rem;
+}
+
+.toggle-label {
+    color: var(--color-text-body);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.toggle-switch-container {
+    flex-shrink: 0;
+}
+
+.toggle-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 51px;
+    height: 31px;
+    cursor: pointer;
+    border-radius: 9999px;
+    border: none;
+    background-color: var(--color-slate-300);
+    padding: 2px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.toggle-handle {
+    height: 100%;
+    width: 27px;
+    border-radius: 9999px;
+    background-color: var(--color-white);
+    /* Always white */
+    box-shadow: var(--shadow-mm);
+    transition: transform 1s ease-in-out;
+}
+
+.toggle-checkbox {
+    position: absolute;
+    visibility: hidden;
+}
+
+.toggle-switch:has(.toggle-checkbox:checked) {
+    justify-content: flex-end;
+    background-color: var(--color-primary);
+}
+
+/* --- Select Input --- */
+.select-container {
+    display: flex;
+    /* Removed max-width: 480px; as it's now on .design-root */
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+}
+
+.select-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-width: 10rem;
+    flex-grow: 1;
+}
+
+.select-label {
+    color: var(--color-text-body);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    padding-bottom: 0.5rem;
+    margin: 0;
+}
+
+.select-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-grow: 1;
+    resize: none;
+    overflow: hidden;
+    height: 3.5rem;
+    padding: 15px;
+    padding-right: 48px;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-text-body);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-card-border);
+    background-color: var(--color-card-bg);
+    background-image: var(--select-button-svg);
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 24px;
+}
+
+.select-input:focus {
+    outline: 0;
+    box-shadow: none;
+    border-color: var(--color-primary);
+}
+
+.select-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* --- Preview Title --- */
+.preview-title {
+    color: var(--color-text-title);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    padding: 1rem 1rem 0.5rem 1rem;
+    margin: 0;
+}
+
+
+.footer-content {
+    display: flex;
+    justify-content: stretch;
+}
+
+.button-group {
+    display: flex;
+    flex-grow: 1;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+}
+
+.button {
+    display: flex;
+    min-width: 84px;
+    max-width: 480px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    height: 3rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 0.015em;
+    border-radius: var(--radius-lg);
+    border: none;
+    text-decoration: none;
+}
+
+.button span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.button.button-previous {
+    background-color: var(--color-slate-300);
+    /* THEMED */
+    color: var(--color-slate-50);
+    /* THEMED */
+    
+}
+.button-group a {
+    text-decoration: none;
+}
+.button.button-next {
+    background-color: var(--color-primary);
+    color: var(--color-text-on-primary);
+}
+
+.footer-spacer {
+    height: 1.25rem;
+    background-color: var(--color-bg);
+}
+
+/* --- Responsive Media Queries --- */
+@media (min-width: 480px) {
+    /* Since .design-root is capped at 480px, these styles kick in when the
+       browser is wider than a phone, keeping the inner content responsive
+       within the fixed width. */
+    .image-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .hero-image {
+        border-radius: var(--radius-lg);
+    }
+
+    .slider-container {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .slider-value-mobile {
+        display: none;
+    }
+
+    .slider-value-desktop {
+        display: block;
+    }
+}

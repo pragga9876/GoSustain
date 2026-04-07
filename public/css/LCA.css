@@ -1,0 +1,212 @@
+/* Remove ALL unwanted browser spacing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fullscreen background */
+body {
+    overflow-x: hidden;
+    font-family : 'Inter', sans-serif;
+    background: #eef2f5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+
+
+/* PHONE SCREEN (NO OUTER GAPS!) */
+.phone-wrapper {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;         /* full phone height */
+    background: #fff;
+    padding: 20px;
+    border-radius: 0;          /* remove rounded edges for mobile */
+    box-shadow: none;          /* no gaps created by shadows */
+}
+
+/* Content container */
+.container {
+    width: 100%;
+}
+
+/* Title */
+h2 {
+    font-family : 'Inter', sans-serif;
+    margin-bottom: 18px;
+    font-size: 30px;
+    font-weight: bolder;
+    text-align: left;
+    color: #2e2b2b;
+}
+
+/* Input and button row */
+.input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.input-row input {
+    flex: 1;
+    padding: 11px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.input-row button {
+    font-size: 14px;
+    background: #28a745;
+    color: white;
+    padding: 11px 14px;
+    border: none;
+    border-radius: 6px;
+}
+
+/* Impact area */
+.impact-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.overall-label{
+    font-weight: bold;
+    font-size: large;
+    color: #545050;
+}
+
+
+.overall-value{
+    color: #545050;
+    font-weight: bolder;
+    font-size: x-large;
+    padding-bottom: 5vh;
+}
+.circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: conic-gradient(#4caf50 0deg, #ffca28 200deg, #ef6c00 330deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leaf {
+    font-size: 26px;
+}
+
+.co2 {
+    
+    text-align: left;
+    margin-top: 5px;
+    font-size: 15px;
+    color: #555;
+}
+
+/* Breakdown box */
+.breakdown-box {
+    background: #fafafa;
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 10px;
+}
+
+.item {
+    margin-bottom: 15px;
+}
+
+.bar {
+    width: 100%;
+    height: 10px;
+    background: #e8e8e8;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    background: #32af66;
+}
+
+.disposal {
+    background: #d9534f;
+}
+
+.percent {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Tips section */
+.tips {
+    color: #4f4a4a;
+    margin-top: 20px;
+}
+
+.tips h3 {
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.tips li {
+    color: #545050;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* ============ RESPONSIVE FIXES ============ */
+
+/* Tablets */
+@media (min-width: 600px) {
+    body {
+        align-items: center;
+    }
+
+    .phone-wrapper {
+        max-width: 450px;
+        border-radius: 14px;
+        min-height: auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+}
+
+/* Laptops */
+@media (min-width: 900px) {
+    .phone-wrapper {
+        max-width: 480px;
+    }
+}
+
+/* Large monitors */
+@media (min-width: 1400px) {
+    .phone-wrapper {
+        max-width: 500px;
+    }
+}
+
+
+.impact-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.impact-left img {
+    width: 80px;     /* adjust size */
+    height: auto;
+}
+
+.tips ul li {
+    margin-bottom: 6px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}

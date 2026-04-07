@@ -1,0 +1,311 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    /* CHANGED: Use variable */
+    background-color: var(--color-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* ADDED: Smooth theme transition */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    max-width: 425px;
+}
+
+.back-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* CHANGED: Use variable */
+    color: var(--color-text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.back-button:hover {
+    transform: scale(1.1);
+}
+
+.back-button:active {
+    transform: scale(0.95);
+}
+
+.page-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: 600;
+    /* CHANGED: Use variable */
+    color: var(--color-primary);
+}
+
+.profile-card {
+    /* CHANGED: Use variable */
+    background: var(--color-card-bg);
+    width: 100%;
+    height: 100vh;
+    max-height: 1000px;
+    /* ADDED: Border for dark mode */
+    border: 1px solid var(--color-card-bg);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Stats Section */
+.stats-section {
+    margin-bottom: 32px;
+}
+
+.stats-title {
+    font-size: 14px;
+    font-weight: 600;
+    /* CHANGED: Use variable */
+    color: var(--color-text-header);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.stat-text {
+    font-size: 13px;
+    /* CHANGED: Use variable */
+    color: var(--color-text-body);
+    font-weight: 500;
+}
+
+/* Form Section */
+.form-section {
+    margin-bottom: 32px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    /* CHANGED: Use variable */
+    color: var(--color-text-header);
+}
+
+.form-input {
+    padding: 12px 14px;
+    /* CHANGED: Use variable */
+    border: 1px solid var(--color-card-border);
+    border-radius: 10px;
+    font-size: 14px;
+    /* CHANGED: Use variable */
+    color: var(--color-text-header);
+    background-color: var(--color-bg);
+    /* Use page bg for input */
+    transition: border-color 0.3s, background-color 0.3s;
+    font-family: inherit;
+}
+
+.form-input::placeholder {
+    /* CHANGED: Use variable */
+    color: var(--color-text-muted);
+}
+
+.form-input:focus {
+    outline: none;
+    /* CHANGED: Use variable */
+    border-color: var(--color-primary);
+    background-color: var(--color-card-bg);
+    /* Use card bg on focus */
+}
+
+/* Buttons Section */
+.button-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-primary {
+    padding: 14px 20px;
+    /* CHANGED: Use variable */
+    background-color: var(--color-primary);
+    color: var(--color-text-on-primary);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    /* CHANGED: Use variable */
+    background-color: var(--color-green-600);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    padding: 14px 20px;
+    /* CHANGED: Use variable */
+    background-color: var(--color-card-bg);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-card-border);
+    t border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+    /* CHANGED: Use variable */
+    border-color: var(--color-text-muted);
+    color: var(--color-text-body);
+}
+
+.btn-secondary:active {
+    /* CHANGED: Use variable */
+    background-color: var(--color-bg);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    body {}
+
+    .page-title {
+        font-size: 18px;
+    }
+
+    .profile-card {
+        padding: 24px 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .stat-item {
+        gap: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        font-size: 13px;
+    }
+
+    .form-input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 12px 16px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 360px) {
+    .profile-card {
+        padding: 20px 12px;
+    }
+
+    .stats-title {
+        font-size: 13px;
+    }
+
+    .stat-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .stat-text {
+        font-size: 12px;
+    }
+
+    .form-label {
+        font-size: 12px;
+    }
+
+    .form-input {
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+}
+
+/* Tablet and larger screens */
+@media (min-width: 768px) {
+    .container {
+        max-width: 480px;
+    }
+
+    .profile-card {
+        padding: 40px 32px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 24px;
+    }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Parser</title>
+    <link rel="stylesheet" href="styles.css">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">-->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Receipt Parser</h1>
+            <p>Scan or upload your receipts instantly</p>
+        </header>
+
+        <div class="upload-section">
+            <div class="button-group">
+                <button class="btn btn-camera" onclick="openCamera()">
+                    📷 Scan Receipt
+                </button>
+                <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">
+                    📁 Upload Image
+                </button>
+            </div>
+
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+            
+            <!-- Camera Section -->
+            <div id="cameraSection" class="hidden">
+                <video id="video" autoplay playsinline></video>
+                <div class="camera-controls">
+                    <button class="btn btn-capture" onclick="captureImage()">Capture</button>
+                    <button class="btn btn-close" onclick="closeCamera()">Close Camera</button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div id="previewSection" class="hidden">
+                <h3>Preview</h3>
+                <canvas id="canvas"></canvas>
+                <img id="preview" alt="Receipt preview">
+                <button class="btn btn-process" onclick="processReceipt()">Process Receipt</button>
+            </div>
+
+            <!-- Loading Section -->
+            <div id="loadingSection" class="hidden">
+                <div class="loader"></div>
+                <p>Processing your receipt...</p>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="hidden">
+                <h3>Extracted Data</h3>
+                <div id="results"></div>
+                <button class="btn btn-new" onclick="resetApp()">Parse Another Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <!--<script src="{{ url_for('static', filename='script.js') }}"></script>-->
+</body>
+</html>

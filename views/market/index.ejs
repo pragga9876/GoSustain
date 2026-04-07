@@ -1,0 +1,111 @@
+<% pageCSS = ["market"]; %>
+
+<section class="market-container">
+  <h2 class="market-title">Carbon Offset Marketplace</h2>
+
+  <% if(currentUser) { %>
+    <p class="user-points">Your points: <strong id="userPoints"><%= currentUser.points || 0 %></strong></p>
+  <% } else { %>
+    <p class="login-call"><a href="/login">Log in</a> to redeem items and support eco causes.</p>
+  <% } %>
+
+  <div class="items-grid">
+    <% items.forEach(item => { %>
+      <div class="market-item" id="item-<%= item._id %>">
+        <h3><%= item.title %></h3>
+        <p class="desc"><%= item.description %></p>
+        <div class="item-footer">
+          <span class="cost"><strong><%= item.costPoints %></strong> pts</span>
+          <% if(currentUser) { %>
+            <form method="POST" class="redeem-form" data-id="<%= item._id %>">
+              <input type="text" name="message" placeholder="Optional note (e.g., plant for my friend)" class="redeem-note">
+              <button type="submit" class="btn-primary">Redeem</button>
+            </form>
+          
+          <% } else { %>
+            <a href="/login" class="btn-primary">Login to Redeem</a>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  <br>
+  <br>
+  <a href="/generate-qr/:activityType" class="btn-primary aj">Scan QR to Log Activity</a>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.querySelectorAll(".redeem-form").forEach(form => {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const itemId = form.dataset.id;
+    const message = form.querySelector("input[name='message']").value;
+
+    try {
+      const res = await fetch(`/market/${itemId}/redeem`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        // 1️⃣ Update points
+        document.getElementById("userPoints").textContent = data.points;
+
+        // 2️⃣ Disable button and show redeemed status
+        form.querySelector("button").textContent = "Redeemed ✅";
+        form.querySelector("button").disabled = true;
+
+        // 3️⃣ Update badges dynamically
+        if (data.badges && data.badges.length) {
+          let badgeSection = document.querySelector(".new-badges-section");
+          if (!badgeSection) {
+            badgeSection = document.createElement("section");
+            badgeSection.className = "new-badges-section";
+            badgeSection.innerHTML = `<h2>🏅 Your Badges</h2><div class="badges-grid"></div>`;
+            document.querySelector(".market-container").appendChild(badgeSection);
+          }
+          const grid = badgeSection.querySelector(".badges-grid");
+          grid.innerHTML = ""; // clear old badges
+          data.badges.forEach(badge => {
+            grid.innerHTML += `
+              <div class="badge-item ${badge.earnedAt ? 'earned' : 'locked'}">
+                <span class="badge-icon">${badge.icon || "🏆"}</span>
+                <div class="badge-info">
+                  <div class="badge-name">${badge.name}</div>
+                  <div class="badge-desc">${badge.description}</div>
+                  ${badge.earnedAt ? `<div class="badge-earned-date">Earned on ${new Date(badge.earnedAt).toDateString()}</div>` : ""}
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        // 4️⃣ Add certificate download link dynamically
+        if (data.certificateUrl) {
+          let certBtn = document.getElementById(`cert-btn-${itemId}`);
+          if (!certBtn) {
+            certBtn = document.createElement("a");
+            certBtn.id = `cert-btn-${itemId}`;
+            certBtn.href = data.certificateUrl;
+            certBtn.target = "_blank";
+            certBtn.className = "btn-primary cert-btn";
+            certBtn.textContent = "Download Certificate 🌿";
+            form.parentNode.appendChild(certBtn);
+          }
+        }
+
+      } else {
+        alert(data.error || "Failed to redeem item");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong during redemption");
+    }
+  });
+});
+</script>
+

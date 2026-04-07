@@ -1,0 +1,111 @@
+
+<% pageCSS = ["dashboard"]; %>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2>Dashboard 🌍</h2>
+    <p>Total CO₂ Emissions: <strong><%= totals.total ? totals.total.toFixed(2) : 0 %> kg</strong></p>
+  </div>
+  <div class="card">
+    <h3>Your Last CO₂ Score</h3>
+    <p><%= lastCalc ? lastCalc.totalCarbon.toFixed(2) : "No record yet" %> kg CO₂</p>
+    <a href="/startCalculator">Recalculate</a>
+</div>
+
+
+  <div class="summary-section">
+    <div class="summary-card travel">
+      <h3>🚗 Travel</h3>
+      <p><%= totals.travel ? totals.travel.toFixed(2) : 0 %> kg CO₂</p>
+    </div>
+    <div class="summary-card energy">
+      <h3>💡 Energy</h3>
+      <p><%= totals.energy ? totals.energy.toFixed(2) : 0 %> kg CO₂</p>
+    </div>
+    <div class="summary-card diet">
+      <h3>🥗 Diet</h3>
+      <p><%= totals.diet ? totals.diet.toFixed(2) : 0 %> kg CO₂</p>
+    </div>
+  </div>
+
+  <div class="progress-section">
+    <h3>Your CO₂ Breakdown</h3>
+    <% const total = totals.total || 1; %>
+    <div class="progress-bar">
+      <div class="progress-segment travel" style="width:<%= (totals.travel/total)*100 %>%"></div>
+      <div class="progress-segment energy" style="width:<%= (totals.energy/total)*100 %>%"></div>
+      <div class="progress-segment diet" style="width:<%= (totals.diet/total)*100 %>%"></div>
+    </div>
+    <p class="eco-tip"><%= ecoTip %></p>
+  </div>
+
+  <!-- 🌿 Weekly Insights Section -->
+  <div class="insights-section">
+    <h3>🌿 Weekly Insights</h3>
+    <div class="insight-cards">
+      <div class="insight-card">
+        <h4>Total This Week</h4>
+        <p><%= weeklyCO2.toFixed(2) %> kg CO₂</p>
+      </div>
+      <div class="insight-card">
+        <h4>Top Source</h4>
+        <p class="capitalize"><%= topType %></p>
+      </div>
+      <div class="insight-card">
+        <h4>Eco Mode</h4>
+        <p><%= apiOnline ? "Online (API)" : "Offline (Formula)" %></p>
+      </div>
+    </div>
+
+    <div class="progress-summary">
+      <h4>Your CO₂ Breakdown</h4>
+      <% const grandTotal = totals.total || 1; %>
+      <div class="progress-bar">
+        <div class="progress-segment travel" style="width:<%= (totals.travel/grandTotal)*100 %>%"></div>
+        <div class="progress-segment energy" style="width:<%= (totals.energy/grandTotal)*100 %>%"></div>
+        <div class="progress-segment diet" style="width:<%= (totals.diet/grandTotal)*100 %>%"></div>
+      </div>
+      <div class="legend">
+        <span>🚗 Travel</span>
+        <span>💡 Energy</span>
+        <span>🥗 Diet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="activity-log">
+    <h3>Recent Activities</h3>
+    <% if (activities.length === 0) { %>
+      <p class="text-center">No activities logged yet. Add one to get started!</p>
+    <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Details</th>
+            <th>CO₂ (kg)</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% activities.forEach(a => { %>
+            <tr>
+              <td><%= a.type %></td>
+              <td>
+                <% if(a.type === 'travel'){ %>
+                  <%= a.mode %> — <%= a.distance %> km
+                <% } else if(a.type === 'energy'){ %>
+                  <%= a.kwh %> kWh
+                <% } else { %>
+                  <%= a.dietType %>
+                <% } %>
+              </td>
+              <td><%= a.co2 ? a.co2.toFixed(2) : 0 %></td>
+              <td><%= new Date(a.date).toLocaleDateString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>

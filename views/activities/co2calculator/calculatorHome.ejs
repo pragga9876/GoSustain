@@ -1,0 +1,148 @@
+<% pageCSS = ["calculatorHome"]; %>
+
+<div class="app-container">
+
+  <header class="header">
+    <h2>Home Energy</h2>
+  </header>
+
+  <div class="progress-dots">
+    <span class="dot"></span>
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <!-- ⭐ ADDED FORM ⭐ -->
+  <form action="/calculator/home" method="POST">
+
+    <main class="content">
+
+      <br><br>
+
+      <div class="card">
+        <img src="/images/calculatorHome.png" alt="House" class="hero-image" />
+      </div>
+
+      <br><br>
+
+      <h3>Home Energy Usage</h3>
+      <p>Estimate your home's energy consumption to calculate your carbon footprint.</p>
+
+      <!-- Monthly Electricity -->
+      <div class="section">
+        <label>Monthly Electricity Usage (kWh)</label>
+        <div class="slider-group">
+          <input type="range" min="0" max="1000" value="150"
+                 id="electricityRange" name="electricityKwh">
+          <span id="electricityValue">150 kWh</span>
+        </div>
+      </div>
+
+      <!-- Household Size -->
+      <div class="section">
+        <label>Household Size</label>
+        <p class="subtext">Number of people living in your household</p>
+
+        <div class="counter">
+          <button type="button" id="decrease">−</button>
+          <span id="householdValue">2</span>
+          <input type="hidden" name="householdSize" id="householdHidden" value="2">
+          <button type="button" id="increase">+</button>
+        </div>
+      </div>
+
+      <!-- Energy Source -->
+      <div class="section">
+        <label>Energy Source</label>
+        <select name="energySource">
+          <option value="" disabled selected>Select</option>
+          <option value="renewable">☀️ Renewable</option>
+          <option value="mixed">🔋 Mixed</option>
+          <option value="nonrenewable">🛢️ Non-Renewable</option>
+        </select>
+      </div>
+
+      <!-- Heating Fuel -->
+      <div class="section">
+        <label>Main Heating Fuel</label>
+        <select name="heatingFuel">
+          <option value="" disabled selected>Select</option>
+          <option value="electric">🔌 Electric</option>
+          <option value="gas">⛽ Gas</option>
+          <option value="wood">🪵 Wood</option>
+        </select>
+      </div>
+
+      <!-- ⭐ REQUIRED HIDDEN INPUTS FOR BACKEND ⭐ -->
+      <input type="hidden" name="lpgCylinders" value="0">
+      <input type="hidden" name="waterUsage" value="0">
+
+      <div class="buttons">
+        <a href="/calculator/travel"><button type="button" class="prev">Previous</button></a>
+        <button type="submit" class="next">Next</button>
+      </div>
+
+    </main>
+  </form>
+</div>
+
+<script>
+  // Theme code (unchanged)
+  const htmlElement = document.documentElement;
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      htmlElement.classList.remove('light');
+      htmlElement.classList.add('dark');
+    } else {
+      htmlElement.classList.remove('dark');
+      htmlElement.classList.add('light');
+    }
+    localStorage.setItem('theme', theme);
+  }
+  const savedTheme = localStorage.getItem('theme');
+  setTheme(savedTheme || 'light');
+
+  // Slider logic
+  function updateSlider(sliderElement, valueElement) {
+    const value = sliderElement.value;
+    const min = sliderElement.min;
+    const max = sliderElement.max;
+    const percent = ((value - min) / (max - min)) * 100;
+
+    valueElement.textContent = value + " kWh";
+    sliderElement.style.setProperty('--value-percent', `${percent}%`);
+  }
+
+  const electricityRange = document.getElementById('electricityRange');
+  const electricityValue = document.getElementById('electricityValue');
+
+  electricityRange.addEventListener('input', () => {
+    updateSlider(electricityRange, electricityValue);
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateSlider(electricityRange, electricityValue);
+  });
+
+  // Household counter
+  const decrease = document.getElementById('decrease');
+  const increase = document.getElementById('increase');
+  const householdValue = document.getElementById('householdValue');
+  const householdHidden = document.getElementById('householdHidden');
+  let count = 2;
+
+  decrease.addEventListener('click', () => {
+    if (count > 1) {
+      count--;
+      householdValue.textContent = count;
+      householdHidden.value = count;
+    }
+  });
+
+  increase.addEventListener('click', () => {
+    count++;
+    householdValue.textContent = count;
+    householdHidden.value = count;
+  });
+</script>

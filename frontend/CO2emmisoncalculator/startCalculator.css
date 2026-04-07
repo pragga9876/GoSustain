@@ -1,0 +1,97 @@
+/* --- UPDATED CSS --- */
+
+/* Full-screen layout - no gaps or scrollbars */
+html, body {
+  margin: 0;
+  padding: 0;
+  /* Use min-height: 100vh for the body */
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden; /* Only hide horizontal scrollbar */
+  background-color: var(--color-gray-200, #e5e7eb);
+  font-family: 'Inter', sans-serif;
+}
+
+/* App container simulating a real mobile app */
+.app-container {
+  /* CRUCIAL CHANGES FOR PHONE VIEWPORT */
+  max-width: 450px; /* Caps the content width */
+  min-height: 100vh; /* Ensures it takes full viewport height */
+  width: 100%; /* Ensures responsiveness below 450px */
+  margin: 0 auto; /* Centers the container horizontally */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle boundary */
+  
+  /* Original styles */
+  display: flex;
+  flex-direction: column;
+  background-color: #F9FAF9; /* The "screen" color */
+  overflow-y: auto;
+}
+
+/* ... rest of your existing CSS ... */
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem;
+}
+
+.close-icon {
+  font-size: 1.25rem;
+  color: #000;
+  cursor: pointer;
+}
+
+/* Main content */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 1.5rem 2rem;
+  text-align: center;
+  color: #1F2937;
+}
+
+.content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Image styling */
+.hero-image {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+/* Description text */
+.description {
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+/* Button styling */
+.start-btn {
+  width: 100%;
+  background-color:var(--color-primary);
+  border: none;
+  color: var(--color-background-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.start-btn:hover {
+  opacity: 0.9;
+}
+

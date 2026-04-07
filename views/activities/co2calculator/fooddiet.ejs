@@ -1,0 +1,110 @@
+<% pageCSS = ["theme", "food"]; %>
+
+<div class="fooddiet-page">   <!-- UNIQUE PAGE WRAPPER -->
+
+<div class="app-container">
+
+  <header class="app-header">
+    <a href="/calculator/home"><div class="back-arrow">←</div></a>
+    <h1>Food and Diet</h1>
+  </header>
+
+  <div class="progress-dots">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot active"></span>
+    <span class="dot"></span>
+  </div>
+
+  <form action="/calculator/fooddiet" method="POST">
+
+    <main class="content">
+
+      <img src="/images/fooddiet.png" class="hero-image">
+
+      <h2>Food & Diet</h2>
+      <p>Tell us about your eating habits to estimate your food-related carbon footprint.</p>
+
+      <div class="input-section">
+
+        <label>Diet Type</label>
+        <select name="dietType" class="select-box" required>
+          <option value="" disabled selected>Select diet type</option>
+          <option value="vegan">Vegan</option>
+          <option value="vegetarian">Vegetarian</option>
+          <option value="pescatarian">Pescatarian</option>
+          <option value="omnivore">Non-Vegetarian</option>
+        </select>
+
+        <label>Meat Consumption Frequency</label>
+        <select name="meatFrequency" class="select-box" required>
+          <option value="" disabled selected>Select frequency</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Few times a week</option>
+          <option value="occasionally">Occasionally</option>
+          <option value="never">Never</option>
+        </select>
+
+        <label>Local Food Percentage <span id="localValue">50%</span></label>
+        <div class="slider-group">
+          <input type="range" min="0" max="100" value="50" 
+                 id="localRange" name="localFoodPercentage">
+        </div>
+
+        <label>Food Waste</label>
+        <select name="foodWaste" class="select-box">
+          <option value="" disabled selected>Select level</option>
+          <option value="low">Low</option>
+          <option value="moderate">Moderate</option>
+          <option value="high">High</option>
+        </select>
+
+      </div>
+
+      <div class="button-group">
+        <a href="/calculator/home">
+          <button type="button" class="prev-btn">Previous</button>
+        </a>
+        <button type="submit" class="next-btn">Next</button>
+      </div>
+
+    </main>
+
+  </form>
+
+</div>
+
+</div> <!-- END WRAPPER -->
+
+
+<script>
+  document.querySelector('.back-arrow').addEventListener('click', () => {
+    window.history.back();
+  });
+
+  // Fixed slider functionality with CSS variable update
+  const localRange = document.getElementById("localRange");
+  const localValue = document.getElementById("localValue");
+  
+  function updateSlider(sliderElement, valueElement) {
+    const value = sliderElement.value;
+    const min = sliderElement.min || 0;
+    const max = sliderElement.max || 100;
+    const percent = ((value - min) / (max - min)) * 100;
+    
+    // Update the text value
+    valueElement.textContent = value + "%";
+    
+    // Update the CSS variable for the track background gradient
+    sliderElement.style.setProperty('--value-percent', `${percent}%`);
+  }
+  
+  localRange.addEventListener("input", () => {
+    updateSlider(localRange, localValue);
+  });
+  
+  // Initialize slider on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    updateSlider(localRange, localValue);
+  });
+</script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equil Sign Up Screen</title>
+    <link rel="stylesheet" href="signUp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="signup-container">
+        <div class="header">
+            <a href="signIn.html"><span class="back-arrow" ><i class="fas fa-arrow-left"></i></span></a>
+            <!-- <span class="screen-title">Equil Sign Up Screen</span> -->
+        </div>
+
+        <div class="content">
+            <h1 class="main-title">Join the Green Revolution</h1>
+            <p class="subtitle">Create your account to start making an impact.</p>
+
+            <form class="signup-form">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name">
+
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email address">
+
+                <label for="password">Password</label>
+                <div class="password-input-group">
+                    <input type="password" id="password" placeholder="Create a password">
+                    <span class="password-toggle"><i class="fas fa-eye-slash"></i></span>
+                </div>
+                <p class="password-hint">Must be at least 8 characters</p>
+                <a href="home.html" class="create-account-btn">Create Account</a>
+            </form>
+
+            <p class="terms-text">
+                By signing up, you agree to our 
+                <a href="#" class="privacy-link">Privacy Policy</a> 
+                and 
+                <a href="#" class="terms-link">Terms of Service</a>.
+            </p>
+
+            <p class="signin-prompt">
+                Already have an account? <a href="signIn.html" class="signin-link">Sign In</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

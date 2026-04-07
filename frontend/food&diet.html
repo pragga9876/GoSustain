@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Food & Diet</title>
+  <link rel="stylesheet" href="food&diet.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="back-arrow">←</div>
+      <h1>Food and Diet</h1>
+    </header>
+
+    <!-- Progress Dots -->
+    <div class="progress-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot active"></span>
+      <span class="dot"></span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="content">
+      <img src="diet img.png" alt="Food & Diet" class="hero-image">
+
+      <h2>Food & Diet</h2>
+      <p>Tell us about your eating habits to estimate your food-related carbon footprint.</p>
+
+      <div class="input-section">
+
+        <label>Diet Type</label>
+        <div class="select-box">
+          <select>
+            <option value="" disabled selected>Select diet type</option>
+            <option>Vegan</option>
+            <option>Vegetarian</option>
+            <option>Pescatarian</option>
+            <option>Non-Vegetarian</option>
+          </select>
+        </div>
+
+        <label>Meat Consumption Frequency</label>
+        <div class="select-box">
+          <select>
+            <option value="" disabled selected>Select frequency</option>
+            <option>Daily</option>
+            <option>Few times a week</option>
+            <option>Occasionally</option>
+            <option>Never</option>
+          </select>
+        </div>
+
+        <label>Local Food Percentage <span id="localValue">50%</span></label>
+        <div class="slider-group">
+          <input type="range" min="0" max="100" value="50" id="localRange">
+        </div>
+
+        <label>Food Waste</label>
+        <div class="select-box">
+          <select>
+            <option value="" disabled selected>Select level</option>
+            <option>Low</option>
+            <option>Moderate</option>
+            <option>High</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 class="live-preview">Live Preview</h3>
+
+      <div class="button-group">
+        <a href="homeEnergy.html">
+          <button class="prev-btn">Previous</button>
+        </a>
+        <a href="homeEnergy.html">
+          <button class="next-btn">Next</button>
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Back button
+    document.querySelector('.back-arrow').addEventListener('click', () => {
+      window.history.back();
+    });
+
+    // Range value update
+    const localRange = document.getElementById("localRange");
+    const localValue = document.getElementById("localValue");
+    localRange.addEventListener("input", () => {
+      localValue.textContent = localRange.value + "%";
+    });
+  </script>
+</body>
+</html>

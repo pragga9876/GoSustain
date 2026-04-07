@@ -1,0 +1,35 @@
+<% pageCSS = ["community"]; %>
+
+<div class="community-container">
+  <h1 class="community-title">🌿 Community Wall</h1>
+
+<div class="community-content">
+  <% if (currentUser) { %>
+    <form action="/community" method="POST" class="post-form">
+      <textarea name="message" placeholder="Share your eco action..." required></textarea>
+      <button type="submit" class="btn-primary">Post</button>
+    </form>
+  <% } else { %>
+    <p class="login-note">
+      <a href="/login">Login</a> to share your eco-friendly actions!
+    </p>
+  <% } %>
+
+  <div class="posts-list">
+    <% posts.forEach(post => { %>
+      <div class="post-card">
+        <div class="post-header">
+          <strong><%= post.username %></strong>
+          <span class="date"><%= post.createdAt.toDateString() %></span>
+        </div>
+        <p class="message"><%= post.message %></p>
+        <form action="/community/<%= post._id %>/like" method="POST" class="like-form">
+          <button class="like-btn">❤️ <%= post.likes %></button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</div>
+</div>
+
+

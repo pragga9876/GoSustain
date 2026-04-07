@@ -1,0 +1,42 @@
+<% pageCSS = ['quiz.css']; %>
+<section class="quiz-container">
+  <h2>🌿 Mini Eco Quiz</h2>
+  <p class="subtitle">Test your eco-knowledge — earn points per correct answer (easy/medium/hard).</p>
+
+  <% if (takenToday) { %>
+    <div class="cooldown-note">
+      <p><strong>You've already taken the quiz today.</strong> Come back tomorrow for another attempt.</p>
+    </div>
+  <% } %>
+
+  <form action="/quiz/submit" method="POST" class="quiz-form">
+    <% if (questions.length === 0) { %>
+      <p>No quiz questions available yet. Check back later.</p>
+    <% } else { %>
+      <% questions.forEach(function(q, idx) { %>
+        <div class="quiz-card">
+          <div class="q-head">
+            <span class="q-number">Q<%= idx + 1 %></span>
+            <p class="q-text"><%= q.question %> <small class="q-diff">(<%= q.difficulty || 'easy' %>)</small></p>
+          </div>
+
+          <!-- hidden input to preserve order/ids -->
+          <input type="hidden" name="qid_<%= idx %>" value="<%= q._id %>">
+
+          <div class="options">
+            <% q.options.forEach(function(opt, i) { %>
+              <label class="option">
+                <input type="radio" name="a_<%= q._id %>" value="<%= i %>" <%= takenToday ? "disabled" : "" %> >
+                <span><%= opt.text %></span>
+              </label>
+            <% }) %>
+          </div>
+        </div>
+      <% }) %>
+
+      <div class="quiz-actions">
+        <button class="btn-primary" type="submit" <%= takenToday ? "disabled" : "" %> >Submit Quiz</button>
+      </div>
+    <% } %>
+  </form>
+</section>

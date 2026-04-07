@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Quick Check</title>
+    <link rel="stylesheet" href="LCA.css">
+    <script src="LCA.js" defer></script>
+
+</head>
+
+<body>
+
+<div class="phone-wrapper">
+    <div class="container">
+        
+        <h2>Life Cycle Analysis</h2>
+
+        <div class="input-row">
+            <input type="text" placeholder="Enter Product (e.g., T-Shirt, Water Bottle)">
+            <button>Analyze Impact</button>
+        </div>
+
+<div class="impact-section">
+
+    <div class="impact-left">
+        <img id="productImage" src="Screenshot 2025-11-16 235856.png" alt="leafpicture">
+        <p class="co2" id="co2Value">---</p>
+    </div>
+
+    <div class="impact-right">
+        <p class="overall-label">Overall Impact:</p>
+        <p class="overall-value" id="impactValue">---</p>
+    </div>
+
+</div>
+
+
+        <!-- Breakdown Section -->
+        <div class="breakdown-box">
+
+            <div class="item">
+                <span>1. Production</span>
+                <div class="bar">
+                    <div class="fill" id="prodFill"></div>
+                </div>
+                <span class="percent" id="prodPercent">0%</span>
+            </div>
+
+            <div class="item">
+                <span>2. Transportation</span>
+                <div class="bar">
+                    <div class="fill" id="transFill"></div>
+                </div>
+                <span class="percent" id="transPercent">0%</span>
+            </div>
+
+            <div class="item">
+                <span>3. Usage</span>
+                <div class="bar">
+                    <div class="fill" id="usageFill"></div>
+                </div>
+                <span class="percent" id="usagePercent">0%</span>
+            </div>
+
+            <div class="item">
+                <span>4. Disposal</span>
+                <div class="bar">
+                    <div class="fill disposal" id="dispFill"></div>
+                </div>
+                <span class="percent" id="dispPercent">0%</span>
+            </div>
+
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips">
+            <h3>Reduce Your Impact</h3>
+            <ul>
+              <li id="tip1"></li>
+              <li id="tip2"></li>
+              <li id="tip3"></li>
+            </ul>
+        </div>
+
+    </div> <!-- END container -->
+</div> <!-- END phone-wrapper -->
+
+</body>
+</html>

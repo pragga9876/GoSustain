@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Carbon Footprint Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="results.css">
+    
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1 class="main-title">Your Carbon Footprint Result</h1>
+            <div class="header-decoration">
+                <svg class="floating-leaf" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+                </svg>
+                <svg class="floating-earth" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C19.92,6.59 22.92,12.06 21.39,17.9C20.85,19.5 19.5,20.85 17.9,21.39C12.06,22.92 6.59,19.92 4.59,15C2.59,10.08 5.59,4.61 10.5,2.61C11.6,2.2 12.8,2 14,2A10,10 0 0,1 24,12A10,10 0 0,1 17.9,17.39M9,12V14H7V12H9Z"/>
+                </svg>
+            </div>
+            
+            <div class="sparkles-container">
+                <div class="sparkle sparkle-1"></div>
+                <div class="sparkle sparkle-2"></div>
+                <div class="sparkle sparkle-3"></div>
+                <div class="sparkle sparkle-4"></div>
+                <div class="sparkle sparkle-5"></div>
+                <div class="sparkle sparkle-6"></div>
+                <div class="sparkle sparkle-7"></div>
+                <div class="sparkle sparkle-8"></div>
+                <div class="sparkle sparkle-9"></div>
+                <div class="sparkle sparkle-10"></div>
+                <div class="sparkle sparkle-11"></div>
+                <div class="sparkle sparkle-12"></div>
+                <div class="sparkle sparkle-13"></div>
+                <div class="sparkle sparkle-14"></div>
+                <div class="sparkle sparkle-15"></div>
+            </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card your-footprint">
+                <div class="card-icon">
+                    <svg class="pulse-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,2C13.1,2 14,2.9 14,4C14,5.3 13.3,6.3 12.4,6.7L12,7L11.6,6.7C10.7,6.3 10,5.3 10,4C10,2.9 10.9,2 12,2M21,9V7H15V9H21M21,11H15V13H21V11M21,15H15V17H21V15M13,17V15H9V17H13M13,13V11H9V13H13M13,9V7H9V9H13M7,7V9H3V7H7M7,11H3V13H7V11M7,15H3V17H7V15M8.5,18.5C9,19 9,20 8.5,20.5L12,24L15.5,20.5C16,20 16,19 15.5,18.5L12,15L8.5,18.5Z"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Your Footprint</h3>
+                    <div class="big-number" id="yourFootprintValue">0</div>
+                    <div class="unit">tons CO₂e/year</div>
+                </div>
+            </div>
+
+            <div class="summary-card global-average">
+                <div class="card-icon">
+                    <svg class="rotate-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6Z"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Global Average</h3>
+                    <div class="big-number">4.8</div>
+                    <div class="unit">tons CO₂e/year</div>
+                </div>
+            </div>
+
+            <div class="summary-card comparison-result" id="comparisonCard">
+                <div class="card-icon">
+                    <svg class="bounce-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Your Status</h3>
+                    <div class="status-text" id="statusText">High</div>
+                    <div class="status-detail" id="statusDetail">Above Average</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h2 class="chart-title">
+                <span class="title-icon">📊</span>
+                Emissions Breakdown
+                <div class="title-decoration"></div>
+            </h2>
+            <div class="chart-container">
+                <canvas id="doughnutChart" width="240" height="240"></canvas>
+                <div class="chart-center-info">
+                    <div class="chart-center-value" id="chartCenterValue">0</div>
+                    <div class="chart-center-unit">tons CO₂e</div>
+                </div>
+            </div>
+            <div class="chart-legend" id="chartLegend">
+                </div>
+        </div>
+
+        <div class="category-grid">
+            <div class="category-card travel" style="--delay: 0.4s">
+                <svg class="category-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                </svg>
+                <div class="category-name">Travel & Transport</div>
+                <div class="category-value" id="travelValue">6.1</div>
+                <div class="category-percentage" id="travelPercentage">34%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="travelProgress"></div>
+                </div>
+                <div class="category-detail">🚗 Car, Flights, Public Transit</div>
+            </div>
+
+            <div class="category-card energy" style="--delay: 0.5s">
+                <svg class="category-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+                </svg>
+                <div class="category-name">Home Energy</div>
+                <div class="category-value" id="energyValue">5.5</div>
+                <div class="category-percentage" id="energyPercentage">30%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="energyProgress"></div>
+                </div>
+                <div class="category-detail">⚡ Electricity, Heating, Cooling</div>
+            </div>
+
+            <div class="category-card food" style="--delay: 0.6s">
+                <svg class="category-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-.78-.78-2.05-.78-2.83 0-.78.78-.78 2.05 0 2.83l7.02 7.01zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.20-1.10-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/>
+                </svg>
+                <div class="category-name">Food & Diet</div>
+                <div class="category-value" id="foodValue">4.6</div>
+                <div class="category-percentage" id="foodPercentage">25%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="foodProgress"></div>
+                </div>
+                <div class="category-detail">🥩 Meat, Dairy, Local vs Import</div>
+            </div>
+
+            <div class="category-card waste" style="--delay: 0.7s">
+                <svg class="category-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                <div class="category-name">Waste & Recycling</div>
+                <div class="category-value" id="wasteValue">2.0</div>
+                <div class="category-percentage" id="wastePercentage">11%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="wasteProgress"></div>
+                </div>
+                <div class="category-detail">♻️ Landfill, Recycling, Compost</div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <h2 class="comparison-title">How You Compare</h2>
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar-label">You</div>
+                    <div class="bar-container">
+                        <div class="bar-fill user-bar" id="userBar"></div>
+                    </div>
+                    <div class="bar-value" id="userBarValue">0t</div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">World Avg</div>
+                    <div class="bar-container">
+                        <div class="bar-fill world-bar" id="worldBar"></div>
+                    </div>
+                    <div class="bar-value">4.8t</div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">National Avg</div>
+                    <div class="bar-container">
+                        <div class="bar-fill national-bar" id="nationalBar"></div>
+                    </div>
+                    <div class="bar-value">9.0t</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="badges-section">
+            <h2 class="badges-title">
+                <span class="badge-icon">🏆</span>
+                Your Eco Achievements
+                <div class="title-decoration"></div>
+            </h2>
+            <div class="badges-grid" id="badgesGrid">
+                </div>
+        </div>
+
+        <div class="insights-section">
+            <h2 class="insights-title">
+                <span class="ai-icon">🤖</span>
+                AI Insights & Personalized Actions
+                <div class="title-decoration"></div>
+            </h2>
+            <div class="insights-grid" id="insightsGrid">
+                </div>
+            <div class="cta-buttons">
+                <button class="cta-button primary" onclick="alert('Goal setting feature coming soon!')">
+                    🎯 Set Climate Goals
+                </button>
+                <button class="cta-button secondary" onclick="alert('Action plan feature coming soon!')">
+                    📋 Create Action Plan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="theme.js"></script>
+    <script src="results.js"></script>
+</body>
+</html>

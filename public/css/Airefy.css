@@ -1,0 +1,207 @@
+/* -------------------- Theme & Reset -------------------- */
+body, .container {
+    max-width: 100% !important;
+    padding-top: 110px !important;
+    margin: 0 !important;
+}
+.airefy-page-wrapper {
+    padding-top: 110px;   /* Adjust based on your navbar height */
+}
+
+.container {
+    width: 100% !important;
+}
+.grid {
+    display: grid !important;
+}
+:root {
+    --bg: #f7f7fa;
+    --bg-2: #ffffff;
+    --fg: #1b1b21;
+    --muted: #4e4e57;
+    --accent: #005f9e;
+    --warn: #b35b00;
+    --bad: #9e0021;
+    --good: #0c7a55;
+    --focus: #4f46e5;
+
+    --card: #ffffff;
+    --border: #e7e7ef;
+    --shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    --radius: 14px;
+    --bar-height: 16px;
+    --glow-size: 180px;
+
+    color-scheme: light;
+
+    --c-pm25: #c23545;
+    --c-pm10: #b35b00;
+    --c-no2: #5b4bc4;
+    --c-so2: #2a79a3;
+    --c-o3: #0c7a55;
+    --c-co: #0c6ba1;
+}
+
+body.dark-mode {
+    --bg: #111;
+    --bg-2: #222;
+    --fg: #e6e6e6;
+    --muted: #a8a8ad;
+    --accent: #7bd1ff;
+    --warn: #ffae42;
+    --bad: #ff5a6e;
+    --good: #6ee7b7;
+    --focus: #9b87f5;
+
+    --card: #111214;
+    --border: #1b1c20;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+
+    --c-pm25: #ff7b8a;
+    --c-pm10: #ffae42;
+    --c-no2: #9b87f5;
+    --c-so2: #7bd1ff;
+    --c-o3: #6ee7b7;
+    --c-co: #4db6e6;
+}
+
+/* -------------------- Layout -------------------- */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial;
+}
+
+.wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 18px 80px;
+    position: relative;
+}
+
+header.appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: var(--bg);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+}
+
+/* Brand and controls */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 20px;
+}
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Search input */
+.search {
+    padding: 16px 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+    z-index: 10;
+}
+
+.search .input-wrap {
+    position: relative;
+}
+.search input[type="search"] {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-2);
+    color: var(--fg);
+    font-size: 16px;
+}
+.search .icon-search {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+}
+
+/* Main AQI bar */
+.bar {
+    position: relative;
+    height: var(--bar-height);
+    background: var(--bg-2);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+}
+.bar > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--good), var(--accent));
+    transition: width 1.2s ease-in-out;
+}
+
+/* Pollutant breakdown bars */
+#bdBar {
+    display: flex;
+    height: 20px;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 12px;
+}
+.bd-segment {
+    height: 100%;
+    width: 0%;
+    transition: width 1.2s ease-in-out;
+}
+
+/* Legend */
+.bd-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.legend-item .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+/* Panels and cards */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .wrap { padding-top: 80px; }
+    .search input[type="search"] { font-size: 16px; }
+}

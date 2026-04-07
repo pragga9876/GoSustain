@@ -1,0 +1,174 @@
+<% pageCSS = ["travel&transportation"]; %>
+
+<div class="app-container">
+
+  <header class="app-header">
+    <a href="/calculator/start"><div class="back-arrow">←</div></a>
+    <h1>Travel and Transportation</h1>
+  </header>
+
+  <div class="progress-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+
+  <!-- ⭐ FORM ADDED HERE ⭐ -->
+  <form action="/calculator/travel" method="POST">
+    <main class="content">
+
+      <img src="/images/travel&transportation.png" class="hero-image">
+
+      <h2>Travel & Transportation</h2>
+      <p>Understand your carbon footprint from daily commutes and long-distance travel.</p>
+
+      <div class="input-section">
+
+        <!-- Weekly Driving (car) -->
+        <label>Weekly Driving Distance (km)</label>
+        <div class="slider-group">
+          <input type="range" min="0" max="100" value="50" id="drivingRange" name="carKm">
+          <span id="drivingValue">50</span>
+        </div>
+
+        <!-- Vehicle Type -->
+        <label>Primary Vehicle Type</label>
+        <select id="vehicleType" class="select-box" name="vehicleType">
+          <option value="" disabled selected>Select</option>
+          <option value="petrol">⛽ Petrol / Gasoline</option>
+          <option value="hybrid">⚡ Hybrid</option>
+          <option value="electric">🔋 Electric</option>
+          <option value="diesel">🛢️ Diesel</option>
+        </select>
+
+        <!-- Flights -->
+        <div class="flight-section">
+          <label>Flights Per Year</label>
+          <div class="counter">
+            <button type="button" id="flightMinus">−</button>
+            <span id="flightCount">2</span>
+            <!-- Hidden input for flights -->
+            <input type="hidden" name="flightHours" id="flightHidden" value="2">
+            <button type="button" id="flightPlus">+</button>
+          </div>
+        </div>
+
+        <!-- Public Transport -->
+        <label>Weekly Public Transport (km)</label>
+        <div class="slider-group">
+          <input type="range" min="0" max="100" value="20" id="transportRange" name="busKm">
+          <span id="transportValue">20</span>
+        </div>
+
+      </div>
+
+      <!-- ⭐ THIS NOW SUBMITS FORM ⭐ -->
+      <button type="submit" class="next-btn">Next</button>
+
+    </main>
+  </form>
+
+</div>
+
+<script>
+  // Theme + slider + counter script (unchanged)
+  const htmlElement = document.documentElement;
+
+    /**
+     * 2. Define the function to set the theme.
+     * This function can be called from any page's specific script.
+     * @param {'light' | 'dark'} theme - The theme to set.
+     */
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        htmlElement.classList.remove('light');
+        htmlElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        htmlElement.classList.remove('dark');
+        htmlElement.classList.add('light');
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // 3. Run on page load: Check for a saved theme in localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      setTheme(savedTheme);
+    } else {
+      // Default to light theme if nothing is saved
+      setTheme('light');
+    }
+
+    // --- 2. PAGE-SPECIFIC LOGIC (from travel.html) ---
+    // This runs after the theme has been set.
+
+    // Back arrow functionality
+    document.querySelector('.back-arrow').addEventListener('click', () => {
+      window.history.back();
+    });
+
+    // --- Slider Logic (UPDATED) ---
+    
+    /**
+     * Helper function to update slider value text and CSS variable for the track fill.
+     * This CSS variable is used by WebKit browsers (Chrome, Safari).
+     */
+    function updateSlider(sliderElement, valueElement) {
+      const value = sliderElement.value;
+      const min = sliderElement.min || 0;
+      const max = sliderElement.max || 100;
+      const percent = ((value - min) / (max - min)) * 100;
+      
+      // 1. Update the number text
+      valueElement.textContent = value;
+      
+      // 2. Update the CSS variable for the track background gradient
+      sliderElement.style.setProperty('--value-percent', `${percent}%`);
+    }
+
+    // Driving Distance Slider
+    const drivingRange = document.getElementById('drivingRange');
+    const drivingValue = document.getElementById('drivingValue');
+    
+    drivingRange.addEventListener('input', () => {
+      updateSlider(drivingRange, drivingValue);
+    });
+    
+    // Public Transport Slider
+    const transportRange = document.getElementById('transportRange');
+    const transportValue = document.getElementById('transportValue');
+    
+    transportRange.addEventListener('input', () => {
+      updateSlider(transportRange, transportValue);
+    });
+    
+    // --- Run on page load to set initial slider positions ---
+    // This makes sure the sliders look correct when the page first loads
+    // We wrap it in DOMContentLoaded to ensure elements are ready
+    document.addEventListener('DOMContentLoaded', () => {
+        updateSlider(drivingRange, drivingValue);
+        updateSlider(transportRange, transportValue);
+    });
+  // Update hidden flights input when user clicks +/−
+  const flightCount = document.getElementById("flightCount");
+  const flightHidden = document.getElementById("flightHidden");
+
+  const plus = document.getElementById("flightPlus");
+  const minus = document.getElementById("flightMinus");
+
+  let count = 2;
+
+  plus.addEventListener("click", () => {
+    count++;
+    flightCount.textContent = count;
+    flightHidden.value = count;
+  });
+
+  minus.addEventListener("click", () => {
+    if (count > 0) count--;
+    flightCount.textContent = count;
+    flightHidden.value = count;
+  });
+</script>
