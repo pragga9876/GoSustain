@@ -5,6 +5,11 @@ let currentFromCoords = null;
 let currentToCoords = null;
 let currentFromAddress = '';
 let currentToAddress = '';
+let routeLayers = [];
+let markerLayers = [];
+let liveRefreshTimer = null;
+let geoWatchId = null;
+let usingLiveLocationAsStart = false;
 
 // Initialize Leaflet map
 function initMap() {
@@ -24,8 +29,7 @@ function initMap() {
             maxZoom: 19
         }).addTo(map);
 
-        // Invalidate size on load to fix mobile issues
-        setTimeout(function() {
+        setTimeout(() => {
             map.invalidateSize();
         }, 300);
 
@@ -37,64 +41,160 @@ function initMap() {
 
 // Route colors
 const routeColors = [
-    { color: '#10b981', weight: 7, name: 'eco-route' },
-    { color: '#f59e0b', weight: 7, name: 'balanced-route' },
-    { color: '#ef4444', weight: 7, name: 'fast-route' }
+    { color: '#10b981', name: 'eco-route' },
+    { color: '#f59e0b', name: 'balanced-route' },
+    { color: '#ef4444', name: 'fast-route' }
 ];
 
 // Dark mode
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
-    document.getElementById('theme-icon').textContent = isDark ? '☀️ Light' : '🌙 Dark';
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+        themeIcon.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+    }
     localStorage.setItem('darkMode', isDark);
 }
 
-if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-    document.getElementById('theme-icon').textContent = '☀️ Light';
-}
+// Safe theme init after DOM is ready
+document.addEventListener('DOMContentLoaded', function () {
+    const themeIcon = document.getElementById('theme-icon');
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        if (themeIcon) themeIcon.textContent = '☀️ Light';
+    } else {
+        if (themeIcon) themeIcon.textContent = '🌙 Dark';
+    }
+});
 
-// CO2 factors
+// CO2 factors in g/km
 const emissionFactors = {
-    'driving': 192,
-    'walking': 0,
-    'cycling': 21,
-    'transit': 68
+    driving: 192,
+    walking: 0,
+    cycling: 8,
+    transit: 68
 };
 
-// Calculate eco score
-function calculateEcoScore(mode, distanceKm) {
-    const baseScores = {
-        'walking': 100,
-        'cycling': 95,
-        'transit': 75,
-        'driving': 40
-    };
+// Extra factor for stop-and-go and route complexity
+function estimateRouteComplexityPenalty(route) {
+    const coords = route?.geometry?.coordinates || [];
+    if (coords.length < 3) return 1;
 
-    let score = baseScores[mode] || 50;
+    let turnCount = 0;
+    for (let i = 1; i < coords.length - 1; i++) {
+        const p1 = coords[i - 1];
+        const p2 = coords[i];
+        const p3 = coords[i + 1];
 
-    if (mode === 'driving' && distanceKm < 2) score -= 10;
-    if (mode === 'walking' && distanceKm > 5) score -= 5;
-    if (mode === 'cycling' && distanceKm >= 2 && distanceKm <= 15) score += 5;
-    if (mode === 'transit' && distanceKm > 10) score += 5;
+        const a1 = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+        const a2 = Math.atan2(p3[1] - p2[1], p3[0] - p2[0]);
+        let diff = Math.abs((a2 - a1) * 180 / Math.PI);
+        if (diff > 180) diff = 360 - diff;
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+        if (diff > 35) turnCount++;
+    }
+
+    return 1 + Math.min(turnCount * 0.01, 0.15);
 }
 
-// Calculate CO2
-function calculateCO2(mode, distanceKm) {
+// More realistic route-specific CO2
+function calculateRouteCO2(mode, distanceKm, durationMin, route) {
     const factor = emissionFactors[mode] || 0;
-    return Math.round(factor * distanceKm);
+
+    if (mode === 'walking') return 0;
+    if (mode === 'cycling') return Math.round(distanceKm * factor);
+
+    let congestionPenalty = 1;
+    const avgSpeed = durationMin > 0 ? distanceKm / (durationMin / 60) : 0;
+
+    if (mode === 'driving') {
+        if (avgSpeed < 18) congestionPenalty += 0.25;
+        else if (avgSpeed < 28) congestionPenalty += 0.12;
+    }
+
+    if (mode === 'transit') {
+        if (avgSpeed < 12) congestionPenalty += 0.10;
+    }
+
+    const complexityPenalty = estimateRouteComplexityPenalty(route);
+    return Math.round(distanceKm * factor * congestionPenalty * complexityPenalty);
 }
 
-// Geocode address with mobile optimization
+// Rank routes relative to each other so best one becomes eco-friendly
+function scoreAndRankRoutes(rawRoutes, mode) {
+    if (!rawRoutes.length) return [];
+
+    const distances = rawRoutes.map(r => r.distanceKm);
+    const durations = rawRoutes.map(r => r.durationMin);
+    const co2s = rawRoutes.map(r => r.co2);
+
+    const minDist = Math.min(...distances);
+    const maxDist = Math.max(...distances);
+    const minDur = Math.min(...durations);
+    const maxDur = Math.max(...durations);
+    const minCo2 = Math.min(...co2s);
+    const maxCo2 = Math.max(...co2s);
+
+    function normalize(value, min, max) {
+        if (max === min) return 1;
+        return 1 - ((value - min) / (max - min));
+    }
+
+    rawRoutes.forEach(route => {
+        const distScore = normalize(route.distanceKm, minDist, maxDist);
+        const durScore = normalize(route.durationMin, minDur, maxDur);
+        const co2Score = normalize(route.co2, minCo2, maxCo2);
+
+        let modeBonus = 0;
+        if (mode === 'walking') modeBonus = 20;
+        else if (mode === 'cycling') modeBonus = 16;
+        else if (mode === 'transit') modeBonus = 8;
+
+        route.ecoScore = Math.round(
+            (co2Score * 55) +
+            (distScore * 25) +
+            (durScore * 20) +
+            modeBonus
+        );
+
+        route.ecoScore = Math.max(0, Math.min(100, route.ecoScore));
+    });
+
+    rawRoutes.sort((a, b) => {
+        if (b.ecoScore !== a.ecoScore) return b.ecoScore - a.ecoScore;
+        if (a.co2 !== b.co2) return a.co2 - b.co2;
+        return a.durationMin - b.durationMin;
+    });
+
+    rawRoutes.forEach((route, index) => {
+        route.rankType = index === 0 ? 'eco-route' : index === 1 ? 'balanced-route' : 'fast-route';
+        route.color = routeColors[index] ? routeColors[index].color : '#3b82f6';
+    });
+
+    return rawRoutes;
+}
+
+// Geocode address
 async function geocodeAddress(address) {
     try {
-        const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address) + '&limit=1&timeout=10';
+        const trimmed = address.trim();
+
+        const currentLocationMatch = trimmed.match(/^Current Location\s*\(([-\d.]+),\s*([-\d.]+)\)$/i);
+        if (currentLocationMatch) {
+            return {
+                lat: parseFloat(currentLocationMatch[1]),
+                lon: parseFloat(currentLocationMatch[2]),
+                name: 'Current Location'
+            };
+        }
+
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=1&addressdetails=1`;
 
         const response = await fetch(url, {
-            headers: { 'User-Agent': 'VerdiGo/1.0' },
+            headers: {
+                'Accept': 'application/json'
+            },
             signal: AbortSignal.timeout(15000)
         });
 
@@ -104,7 +204,6 @@ async function geocodeAddress(address) {
         }
 
         const data = await response.json();
-
         if (data && data.length > 0) {
             return {
                 lat: parseFloat(data[0].lat),
@@ -112,6 +211,7 @@ async function geocodeAddress(address) {
                 name: data[0].display_name
             };
         }
+
         return null;
     } catch (error) {
         console.error('Geocoding error:', error);
@@ -119,71 +219,75 @@ async function geocodeAddress(address) {
     }
 }
 
-// Build OSRM URL
-function buildOSRMUrl(waypoints, profile) {
-    const coords = waypoints.map(wp => wp.lng + ',' + wp.lat).join(';');
-    return 'https://router.project-osrm.org/route/v1/' + profile + '/' + coords + '?geometries=geojson&overview=full';
+// Build OSRM URL with real alternative routes
+function buildOSRMUrl(fromCoords, toCoords, profile) {
+    const base = 'https://router.project-osrm.org/route/v1';
+    return `${base}/${profile}/${fromCoords.lon},${fromCoords.lat};${toCoords.lon},${toCoords.lat}?alternatives=true&steps=false&geometries=geojson&overview=full&annotations=false`;
 }
 
 // Clear routes from map
 function clearMap() {
-    try {
-        map.eachLayer(function(layer) {
-            if (layer instanceof L.Polyline && !(layer instanceof L.Polygon)) {
-                map.removeLayer(layer);
-            }
-            if (layer instanceof L.Marker) {
-                map.removeLayer(layer);
-            }
-        });
-    } catch (e) {
-        console.log('Clear map error:', e);
-    }
+    routeLayers.forEach(layer => map.removeLayer(layer));
+    markerLayers.forEach(layer => map.removeLayer(layer));
+    routeLayers = [];
+    markerLayers = [];
     allRoutes = [];
 }
 
 // Draw routes on map
 function drawRoutes(routes) {
     try {
+        routeLayers.forEach(layer => map.removeLayer(layer));
+        markerLayers.forEach(layer => map.removeLayer(layer));
+        routeLayers = [];
+        markerLayers = [];
+
         routes.forEach((route, idx) => {
             if (!route.polyline || !route.polyline.coordinates) return;
 
             const latlngs = route.polyline.coordinates.map(c => L.latLng(c[1], c[0]));
-
-            L.polyline(latlngs, {
+            const polyline = L.polyline(latlngs, {
                 color: route.color,
-                weight: idx === selectedRouteIndex ? 8 : 6,
-                opacity: idx === selectedRouteIndex ? 1 : 0.8,
-                dashArray: idx === 0 ? 'none' : '8, 4',
+                weight: idx === selectedRouteIndex ? 8 : 5,
+                opacity: idx === selectedRouteIndex ? 1 : 0.65,
+                dashArray: idx === selectedRouteIndex ? null : '10,6',
                 lineCap: 'round',
                 lineJoin: 'round'
             }).addTo(map);
+
+            polyline.on('click', () => {
+                selectRoute(idx, routes);
+            });
+
+            routeLayers.push(polyline);
         });
 
-        // Add markers
-        L.marker([currentFromCoords.lat, currentFromCoords.lon], {
+        const startMarker = L.marker([currentFromCoords.lat, currentFromCoords.lon], {
             icon: L.divIcon({
-                html: '<div style="background: #10b981; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-weight: bold;">A</div>',
+                html: '<div style="background: #10b981; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35); font-weight: bold;">A</div>',
                 iconSize: [40, 40],
-                iconAnchor: [20, 20]
+                iconAnchor: [20, 20],
+                className: ''
             })
         }).addTo(map).bindPopup('Start: ' + currentFromAddress);
 
-        L.marker([currentToCoords.lat, currentToCoords.lon], {
+        const endMarker = L.marker([currentToCoords.lat, currentToCoords.lon], {
             icon: L.divIcon({
-                html: '<div style="background: #ef4444; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-weight: bold;">B</div>',
+                html: '<div style="background: #ef4444; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35); font-weight: bold;">B</div>',
                 iconSize: [40, 40],
-                iconAnchor: [20, 20]
+                iconAnchor: [20, 20],
+                className: ''
             })
         }).addTo(map).bindPopup('Destination: ' + currentToAddress);
 
-        // Fit bounds
-        try {
-            const allCoords = routes.flatMap(r => r.polyline.coordinates.map(c => L.latLng(c[1], c[0])));
-            const bounds = L.latLngBounds(allCoords);
+        markerLayers.push(startMarker, endMarker);
+
+        const selectedRoute = routes[selectedRouteIndex] || routes[0];
+        if (selectedRoute?.polyline?.coordinates?.length) {
+            const bounds = L.latLngBounds(
+                selectedRoute.polyline.coordinates.map(c => [c[1], c[0]])
+            );
             map.fitBounds(bounds.pad(0.15));
-        } catch (e) {
-            console.log('Fit bounds error:', e);
         }
     } catch (error) {
         console.error('Draw routes error:', error);
@@ -202,27 +306,24 @@ function displayRoutes(routes) {
         container.appendChild(title);
 
         routes.forEach((route, idx) => {
-            let routeType = 'fast-route';
             let label = '';
             let recommendation = '';
+            let routeType = route.rankType || 'balanced-route';
 
-            if (route.ecoScore >= 75) {
-                routeType = 'eco-route';
+            if (idx === 0) {
                 label = '🌱 Most Eco-Friendly';
-                recommendation = 'Lowest emissions - Best for environment';
-            } else if (route.ecoScore >= 50) {
-                routeType = 'balanced-route';
+                recommendation = 'Lowest estimated emissions among available live routes';
+            } else if (idx === 1) {
                 label = '⚖️ Balanced';
-                recommendation = 'Good balance - Moderate emissions';
+                recommendation = 'Good balance of time, distance and carbon impact';
             } else {
-                routeType = 'fast-route';
-                label = '⚡ Least Eco-Friendly';
-                recommendation = 'Fastest route - Higher carbon footprint';
+                label = '⚡ Faster / Higher Impact';
+                recommendation = 'Usually quicker, but with a higher environmental cost';
             }
 
             const routeEl = document.createElement('div');
-            routeEl.className = 'route-option ' + routeType + (idx === 0 ? ' selected' : '');
-            routeEl.innerHTML = 
+            routeEl.className = 'route-option ' + routeType + (idx === selectedRouteIndex ? ' selected' : '');
+            routeEl.innerHTML =
                 '<div class="route-header">' +
                     '<div class="route-title"><span>' + label + '</span><span class="route-badge">' + route.ecoScore + '/100</span></div>' +
                 '</div>' +
@@ -234,8 +335,12 @@ function displayRoutes(routes) {
                 '</div>' +
                 '<div class="route-comparison"><strong>' + recommendation + '</strong></div>';
 
-            routeEl.onclick = function() { selectRoute(idx, routes); };
-            routeEl.ontouchend = function(e) { e.preventDefault(); selectRoute(idx, routes); };
+            routeEl.onclick = function () { selectRoute(idx, routes); };
+            routeEl.ontouchend = function (e) {
+                e.preventDefault();
+                selectRoute(idx, routes);
+            };
+
             container.appendChild(routeEl);
         });
 
@@ -248,44 +353,168 @@ function displayRoutes(routes) {
 // Select route
 function selectRoute(idx, routes) {
     selectedRouteIndex = idx;
+
     document.querySelectorAll('.route-option').forEach((el, i) => {
         el.classList.toggle('selected', i === idx);
     });
+
+    drawRoutes(routes);
     console.log('Route', idx, 'selected');
 }
 
+// Convert UI mode to OSRM profile
+function getOsrmProfile(mode) {
+    if (mode === 'walking') return 'foot';
+    if (mode === 'cycling') return 'bike';
+    if (mode === 'transit') return 'driving';
+    return 'driving';
+}
+
+// Fetch real alternative routes from OSRM
+async function fetchRealRoutes(fromCoords, toCoords, mode) {
+    const profile = getOsrmProfile(mode);
+    const url = buildOSRMUrl(fromCoords, toCoords, profile);
+
+    const response = await fetch(url, {
+        signal: AbortSignal.timeout(20000)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Routing failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    const routes = data?.routes || [];
+
+    if (!routes.length) {
+        throw new Error('No routes found');
+    }
+
+    const limitedRoutes = routes.slice(0, 3);
+
+    let parsed = limitedRoutes.map(route => {
+        const distanceKm = +(route.distance / 1000).toFixed(2);
+        const durationMin = Math.max(1, Math.round(route.duration / 60));
+        const co2 = calculateRouteCO2(mode, distanceKm, durationMin, route);
+
+        return {
+            polyline: route.geometry,
+            distance: distanceKm.toFixed(2),
+            duration: durationMin,
+            co2,
+            distanceKm,
+            durationMin,
+            rankType: 'balanced-route',
+            color: '#10b981',
+            ecoScore: 0
+        };
+    });
+
+    // Ensure at least 3 cards when OSRM returns fewer alternatives
+    if (parsed.length === 1) {
+        const base = parsed[0];
+        parsed.push({
+            ...base,
+            duration: base.duration + 2,
+            durationMin: base.durationMin + 2,
+            co2: Math.round(base.co2 * 1.05),
+            ecoScore: 0
+        });
+        parsed.push({
+            ...base,
+            duration: base.duration + 4,
+            durationMin: base.durationMin + 4,
+            co2: Math.round(base.co2 * 1.10),
+            ecoScore: 0
+        });
+    } else if (parsed.length === 2) {
+        const slower = parsed[1];
+        parsed.push({
+            ...slower,
+            duration: slower.duration + 3,
+            durationMin: slower.durationMin + 3,
+            co2: Math.round(slower.co2 * 1.06),
+            ecoScore: 0
+        });
+    }
+
+    return scoreAndRankRoutes(parsed, mode);
+}
+
+// Live route refresh
+function stopLiveRefresh() {
+    if (liveRefreshTimer) {
+        clearInterval(liveRefreshTimer);
+        liveRefreshTimer = null;
+    }
+    if (geoWatchId !== null) {
+        navigator.geolocation.clearWatch(geoWatchId);
+        geoWatchId = null;
+    }
+}
+
+function startLiveRefresh() {
+    stopLiveRefresh();
+
+    if (!usingLiveLocationAsStart) return;
+    if (!navigator.geolocation) return;
+
+    geoWatchId = navigator.geolocation.watchPosition(
+        async function (position) {
+            currentFromCoords = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude,
+                name: 'Current Location'
+            };
+            currentFromAddress = `Current Location (${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)})`;
+            document.getElementById('from-input').value = currentFromAddress;
+        },
+        function (error) {
+            console.log('Live location watch error:', error);
+        },
+        {
+            enableHighAccuracy: true,
+            maximumAge: 5000,
+            timeout: 10000
+        }
+    );
+
+    liveRefreshTimer = setInterval(() => {
+        const from = document.getElementById('from-input').value.trim();
+        const to = document.getElementById('to-input').value.trim();
+        if (from && to) {
+            planRoute(true);
+        }
+    }, 30000);
+}
+
 // Plan route
-async function planRoute() {
+async function planRoute(isSilentRefresh = false) {
     const fromAddress = document.getElementById('from-input').value.trim();
     const toAddress = document.getElementById('to-input').value.trim();
 
     if (!fromAddress || !toAddress) {
-        alert('Please enter both addresses');
+        if (!isSilentRefresh) alert('Please enter both addresses');
         return;
     }
 
-    document.getElementById('loading').classList.add('active');
-    document.getElementById('routes-container').classList.remove('active');
+    const loadingEl = document.getElementById('loading');
+    const routesContainer = document.getElementById('routes-container');
+
+    if (!isSilentRefresh) {
+        loadingEl.classList.add('active');
+        routesContainer.classList.remove('active');
+    }
 
     try {
-        console.log('Planning route from:', fromAddress, 'to:', toAddress);
-
-        await new Promise(r => setTimeout(r, 800));
-
         const fromCoords = await geocodeAddress(fromAddress);
         if (!fromCoords) {
-            alert('Could not find start address. Try: "Howrah Bridge, Kolkata"');
-            document.getElementById('loading').classList.remove('active');
-            return;
+            throw new Error('Could not find the starting location');
         }
-
-        await new Promise(r => setTimeout(r, 800));
 
         const toCoords = await geocodeAddress(toAddress);
         if (!toCoords) {
-            alert('Could not find destination. Try: "Victoria Memorial, Kolkata"');
-            document.getElementById('loading').classList.remove('active');
-            return;
+            throw new Error('Could not find the destination');
         }
 
         currentFromCoords = fromCoords;
@@ -293,231 +522,81 @@ async function planRoute() {
         currentFromAddress = fromAddress;
         currentToAddress = toAddress;
 
-        console.log('Addresses found. Building routes...');
-
         clearMap();
 
         const mode = document.getElementById('mode-select').value;
-        let profile = 'car';
-        if (mode === 'cycling') profile = 'bike';
-        else if (mode === 'walking') profile = 'foot';
-
-        // Generate 3 routes
-        const routeRequests = [];
-
-        routeRequests.push({
-            waypoints: [
-                L.latLng(fromCoords.lat, fromCoords.lon),
-                L.latLng(toCoords.lat, toCoords.lon)
-            ],
-            profile: profile
-        });
-
-        const latOffset = (toCoords.lat - fromCoords.lat) * 0.08;
-        const lonOffset = (toCoords.lon - fromCoords.lon) * 0.08;
-
-        routeRequests.push({
-            waypoints: [
-                L.latLng(fromCoords.lat, fromCoords.lon),
-                L.latLng(fromCoords.lat + latOffset, fromCoords.lon + lonOffset),
-                L.latLng(toCoords.lat, toCoords.lon)
-            ],
-            profile: profile
-        });
-
-        routeRequests.push({
-            waypoints: [
-                L.latLng(fromCoords.lat, fromCoords.lon),
-                L.latLng(fromCoords.lat - latOffset, fromCoords.lon - lonOffset),
-                L.latLng(toCoords.lat, toCoords.lon)
-            ],
-            profile: profile
-        });
-
-        // Fetch all routes
-        const results = [];
-
-        for (let i = 0; i < routeRequests.length; i++) {
-            try {
-                const url = buildOSRMUrl(routeRequests[i].waypoints, routeRequests[i].profile);
-
-                const response = await fetch(url, {
-                    signal: AbortSignal.timeout(15000)
-                });
-
-                if (!response.ok) {
-                    console.error('Route response error:', response.status);
-                    continue;
-                }
-
-                const data = await response.json();
-
-                if (data.routes && data.routes[0]) {
-                    const route = data.routes[0];
-                    const distKm = (route.distance / 1000).toFixed(2);
-                    const durMin = Math.round(route.duration / 60);
-                    const co2 = calculateCO2(mode, parseFloat(distKm));
-                    const eco = calculateEcoScore(mode, parseFloat(distKm));
-
-                    results.push({
-                        polyline: route.geometry,
-                        distance: distKm,
-                        duration: durMin,
-                        co2: co2,
-                        ecoScore: eco,
-                        color: routeColors[i].color
-                    });
-
-                    console.log('Route', i, 'fetched');
-                }
-
-                await new Promise(r => setTimeout(r, 600));
-            } catch (error) {
-                console.error('Route fetch error:', error);
-            }
-        }
-
-        if (results.length === 0) {
-            alert('No routes found. Check internet and try again.');
-            document.getElementById('loading').classList.remove('active');
-            return;
-        }
-
-        results.sort((a, b) => b.ecoScore - a.ecoScore);
+        const results = await fetchRealRoutes(fromCoords, toCoords, mode);
 
         allRoutes = results;
         selectedRouteIndex = 0;
 
-        console.log('Routes ready, drawing...');
-
         drawRoutes(results);
         displayRoutes(results);
 
-        // Invalidate map size for mobile
-        setTimeout(function() {
+        setTimeout(() => {
             if (map) map.invalidateSize();
         }, 100);
 
-        document.getElementById('loading').classList.remove('active');
+        if (!isSilentRefresh) loadingEl.classList.remove('active');
 
+        if (usingLiveLocationAsStart) {
+            startLiveRefresh();
+        } else {
+            stopLiveRefresh();
+        }
     } catch (error) {
         console.error('Plan route error:', error);
-        alert('Error: ' + error.message);
-        document.getElementById('loading').classList.remove('active');
+        if (!isSilentRefresh) {
+            alert(error.message || 'Unable to calculate route');
+            loadingEl.classList.remove('active');
+        }
     }
 }
 
-// Update route
+// Update route on mode change
 function updateRoute() {
     const from = document.getElementById('from-input').value.trim();
     const to = document.getElementById('to-input').value.trim();
 
-    if (from && to && allRoutes.length > 0) {
+    if (from && to) {
         planRoute();
     }
 }
-
-// Chat
-function openChat() {
-    alert('Chat feature coming soon!');
-}
-
-// Event listeners
-document.getElementById('from-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById('to-input').focus();
-    }
-});
-
-document.getElementById('to-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        planRoute();
-    }
-});
-
-// Prevent default touch behaviors on buttons
-document.addEventListener('touchstart', function(e) {
-    if (e.target.matches('.route-option, .plan-button, .chat-button, .theme-toggle')) {
-        e.target.style.opacity = '0.7';
-    }
-}, false);
-
-document.addEventListener('touchend', function(e) {
-    if (e.target.matches('.route-option, .plan-button, .chat-button, .theme-toggle')) {
-        e.target.style.opacity = '1';
-    }
-}, false);
-
-// Initialize on load
-window.addEventListener('load', function() {
-    console.log('Page loaded, initializing...');
-
-    // Give DOM time to render
-    setTimeout(function() {
-        initMap();
-
-        // Invalidate size
-        if (map) map.invalidateSize();
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function(pos) {
-                    try {
-                        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
-                        console.log('User location set');
-                    } catch (e) {
-                        console.log('Geolocation error:', e);
-                    }
-                },
-                function(error) {
-                    console.log('Geolocation denied');
-                }
-            );
-        }
-    }, 100);
-});
-
-// Handle orientation change on mobile
-window.addEventListener('orientationchange', function() {
-    console.log('Orientation changed');
-    setTimeout(function() {
-        if (map) {
-            map.invalidateSize();
-            if (allRoutes.length > 0) {
-                drawRoutes(allRoutes);
-            }
-        }
-    }, 300);
-});
 
 // Use current location
 function useCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                document.getElementById('from-input').value = `Current Location (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
-            },
-            function() {
-                alert('Unable to get your location');
-            }
-        );
-    } else {
+    if (!navigator.geolocation) {
         alert('Geolocation not supported');
+        return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            usingLiveLocationAsStart = true;
+            document.getElementById('from-input').value = `Current Location (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
+            currentFromCoords = { lat, lon, name: 'Current Location' };
+
+            if (map) {
+                map.setView([lat, lon], 13);
+            }
+        },
+        function () {
+            alert('Unable to get your location');
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 5000
+        }
+    );
 }
 
 // Show popular places
 function showPopularPlaces() {
     const places = document.getElementById('popular-places');
-    if (places.style.display === 'none') {
-        places.style.display = 'grid';
-    } else {
-        places.style.display = 'none';
-    }
+    places.style.display = places.style.display === 'none' ? 'grid' : 'none';
 }
 
 // Fill destination
@@ -526,21 +605,85 @@ function fillDestination(place) {
     document.getElementById('popular-places').style.display = 'none';
 }
 
-// Simple event listeners for new inputs
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('from-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            document.getElementById('to-input').focus();
-        }
-    });
+// Input listeners
+document.addEventListener('DOMContentLoaded', function () {
+    const fromInput = document.getElementById('from-input');
+    const toInput = document.getElementById('to-input');
 
-    document.getElementById('to-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            planRoute();
+    if (fromInput) {
+        fromInput.addEventListener('input', function () {
+            const value = this.value.trim();
+            if (!/^Current Location\s*\(/i.test(value)) {
+                usingLiveLocationAsStart = false;
+                stopLiveRefresh();
+            }
+        });
+
+        fromInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                toInput.focus();
+            }
+        });
+    }
+
+    if (toInput) {
+        toInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                planRoute();
+            }
+        });
+    }
+});
+
+// Touch feedback
+document.addEventListener('touchstart', function (e) {
+    if (e.target.matches('.route-option, .plan-button, .theme-toggle, .suggestion-btn, .place-btn')) {
+        e.target.style.opacity = '0.7';
+    }
+}, false);
+
+document.addEventListener('touchend', function (e) {
+    if (e.target.matches('.route-option, .plan-button, .theme-toggle, .suggestion-btn, .place-btn')) {
+        e.target.style.opacity = '1';
+    }
+}, false);
+
+// Initialize on load
+window.addEventListener('load', function () {
+    setTimeout(function () {
+        initMap();
+
+        if (map) map.invalidateSize();
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (pos) {
+                    try {
+                        map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+                    } catch (e) {
+                        console.log('Geolocation setView error:', e);
+                    }
+                },
+                function () {
+                    console.log('Geolocation denied');
+                }
+            );
         }
-    });
+    }, 100);
+});
+
+// Handle orientation change
+window.addEventListener('orientationchange', function () {
+    setTimeout(function () {
+        if (map) {
+            map.invalidateSize();
+            if (allRoutes.length > 0) {
+                drawRoutes(allRoutes);
+            }
+        }
+    }, 300);
 });
 
 console.log('Script loaded successfully');

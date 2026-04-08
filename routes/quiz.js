@@ -41,7 +41,7 @@ router.get("/quiz", async (req, res) => {
       takenToday = (lastKey === todayKey);
     }
     res.render("quiz/index", {
-      title: "Eco Quiz | Equil",
+      title: "Eco Quiz | GoSustain",
       pageCSS: ["quiz"],
       currentUser: req.user,
       questions,
@@ -148,7 +148,7 @@ router.post("/quiz/submit", async (req, res) => {
 
     // Render result page
     res.render("quiz/result", {
-      title: "Quiz Result | Equil",
+      title: "Quiz Result | GoSustain",
       pageCSS: ["quiz"],
       currentUser: req.user,
       correctCount,

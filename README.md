@@ -29,7 +29,7 @@ The platform calculates estimated **CO₂ emissions** from each activity and off
 - EJS (Templating)
 - HTML5, CSS3 (modular files per page)
 - JavaScript (Dynamic UI)
-- Responsive Design inspired by Tailwind/Equil Theme
+- Responsive Design inspired by Tailwind/GoSustain Theme
 
 **Backend**
 - Node.js

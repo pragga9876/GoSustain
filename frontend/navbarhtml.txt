@@ -7,7 +7,7 @@ now paste this right after the body tag of new page:
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <span class="sidebar-title">Equil</span>
+        <span class="sidebar-title">GoSustain</span>
         <button class="sidebar-close-button" id="sidebar-close-btn">
           <span class="material-icons-outlined">close</span>
         </button>

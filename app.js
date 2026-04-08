@@ -6,11 +6,12 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const path = require("path");
+const ejslayouts = require("express-ejs-layouts");
+const MongoStore = require("connect-mongo");
+
 const User = require("./models/user");
 const userRoutes = require("./routes/user");
-
 const chatRoutes = require("./routes/chat");
-const ejslayouts = require("express-ejs-layouts");
 const leaderboardRoutes = require("./routes/leaderboard");
 const communityRoutes = require("./routes/community");
 const marketRoutes = require("./routes/market");
@@ -18,63 +19,66 @@ const quizRoutes = require("./routes/quiz");
 const calculatorRoutes = require("./routes/calculator");
 const qrRoutes = require("./routes/qr");
 const airefyRoutes = require("./routes/airefy");
-const MongoStore = require('connect-mongo');
 const ecoTwin = require("./routes/ecotwin");
 const mapRoutes = require("./routes/map");
-const receiptRouter = require('./routes/receipt');
-
-
+const receiptRouter = require("./routes/receipt");
 
 dotenv.config();
+
 const app = express();
 
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log("MongoDB Error:", err));
 
-  
+// Session Store
 const store = MongoStore.create({
   mongoUrl: process.env.MONGO_URI,
   touchAfter: 24 * 60 * 60,
   crypto: {
-    secret: process.env.SECRET
-  }
+    secret: process.env.SESSION_SECRET,
+  },
 });
-store.on('error', function(e){
-  console.log('SESSION STORE ERROR', e);
+
+store.on("error", function (e) {
+  console.log("SESSION STORE ERROR", e);
 });
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log(" MongoDB Connected"))
-  .catch((err) => console.log(" MongoDB Error:", err));
+
 // EJS Setup
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
 app.use(ejslayouts);
 app.set("layout", "layouts/boilerplate.ejs");
 
 // Middlewares
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.json());
 
 // Sessions + Flash
-app.use(session({
-  store:store,
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    store: store,
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 app.use(flash());
 
 // Passport Setup
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Use local strategy
+// Local Strategy
 passport.use(
   new LocalStrategy({ usernameField: "email" }, User.authenticate())
 );
-// Serialize / deserialize user
+
+// Serialize / Deserialize User
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -88,7 +92,6 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/", userRoutes);
-
 app.use("/", chatRoutes);
 app.use("/", leaderboardRoutes);
 app.use("/community", communityRoutes);
@@ -99,7 +102,10 @@ app.use("/", qrRoutes);
 app.use("/airefy", airefyRoutes);
 app.use("/eco", ecoTwin);
 app.use("/map", mapRoutes);
-app.get("/api/receipt",receiptRouter);
+app.use("/api/receipt", receiptRouter);
 
+// Server Start
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});

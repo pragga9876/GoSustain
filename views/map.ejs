@@ -1,4 +1,5 @@
 <% pageCSS = ["map"]; %>
+
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -9,7 +10,6 @@
         <div class="logo">🌱</div>
         <h1>GREEN LANE</h1>
     </div>
-
     <div class="header-right">
         <button class="theme-toggle" onclick="toggleTheme()">
             <span id="theme-icon">🌙 Dark</span>
@@ -24,12 +24,22 @@
             
             <div class="location-box">
                 <h3 class="location-title">📍 FROM</h3>
-                <input type="text" id="from-input" class="location-input" placeholder="Enter starting location">
+                <input
+                    type="text"
+                    id="from-input"
+                    class="location-input"
+                    placeholder="Enter starting location"
+                >
             </div>
             
             <div class="location-box">
                 <h3 class="location-title">🎯 TO</h3>
-                <input type="text" id="to-input" class="location-input" placeholder="Enter destination">
+                <input
+                    type="text"
+                    id="to-input"
+                    class="location-input"
+                    placeholder="Enter destination"
+                >
             </div>
         </div>
 
@@ -41,6 +51,7 @@
                 <button class="suggestion-btn" onclick="useCurrentLocation()">📍 My Location</button>
                 <button class="suggestion-btn" onclick="showPopularPlaces()">⭐ Popular Places</button>
             </div>
+
             <div id="popular-places" class="popular-list" style="display: none;">
                 <button class="place-btn" onclick="fillDestination('Victoria Memorial, Kolkata')">🏛️ Victoria Memorial</button>
                 <button class="place-btn" onclick="fillDestination('Howrah Bridge, Kolkata')">🌉 Howrah Bridge</button>

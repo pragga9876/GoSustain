@@ -130,7 +130,7 @@ router.get("/certificate/:id", isLoggedIn, async (req, res) => {
     fs.mkdirSync("./public/certificates", { recursive: true });
 
     doc.pipe(fs.createWriteStream(filePath));
-    doc.fontSize(24).text("🌿 Equil Carbon Offset Certificate", { align: "center" });
+    doc.fontSize(24).text("🌿 GoSustain Carbon Offset Certificate", { align: "center" });
     doc.moveDown();
     doc.fontSize(14).text(`This certifies that ${user.username} has successfully redeemed:`);
     doc.text(`${id} — reducing carbon impact and supporting sustainability.`);

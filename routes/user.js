@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
 // 🧾 Register form
 router.get("/register", (req, res) => {
   res.render("users/register", {
-    title : "Sign Up | Equil", 
+    title : "Sign Up | GoSustain", 
     pageCSS : ["auth"], 
      currentUser: req.user,
    
@@ -94,7 +94,7 @@ router.get("/profile", isLoggedIn, async (req, res) => {
     };
 
     res.render("users/profile", {
-      title: "My Profile | Equil",
+      title: "My Profile | GoSustain",
       user,                    // ✅ this is the key part
       totals,
       activities,
@@ -133,9 +133,9 @@ router.get("/lca", (req, res) => {
 
 
 router.get('/welcome', (req, res) => {
-  res.render('welcomeToEquil', {
-    title: 'Welcome to Equil',  
-    pageCSS: ['welcomeToEquil'], 
+  res.render('welcomeToGoSustain', {
+    title: 'Welcome to GoSustain',  
+    pageCSS: ['welcomeToGoSustain'], 
     currentUser: req.user
   });
 });
@@ -177,7 +177,7 @@ router.get('/help', (req, res) => {
 
 router.get('/faq', (req, res) => {
   res.render('faq', {
-    title: 'Frequently Asked Questions | Equil',
+    title: 'Frequently Asked Questions | GoSustain',
     pageCSS: ['faq'],
     currentUser: req.user
   });
