@@ -1,62 +1,135 @@
 module.exports = function calculateCarbon(data) {
-
   // ==========================
   // 1. TRAVEL
   // ==========================
   const t = data.travel || {};
 
-  const travel =
-    (parseFloat(t.carKm) || 0) * 0.21 +         // car emissions per km
-    (parseFloat(t.bikeKm) || 0) * 0.0 +         // bike = 0 emissions
-    (parseFloat(t.busKm) || 0) * 0.05 +         // bus per km
-    (parseFloat(t.trainKm) || 0) * 0.04 +       // train per km
-    (parseFloat(t.flightHours) || 0) * 10;      // flight emissions (reduced from 25 to 10 kg/hour for weekly calculation)
+  const vehicleFactors = {
+    petrol: 0.192,
+    diesel: 0.171,
+    hybrid: 0.110,
+    electric: 0.060
+  };
 
+  const carFactor = vehicleFactors[t.vehicleType] || 0.150;
+
+  const travel =
+    (parseFloat(t.carKm) || 0) * carFactor +
+    (parseFloat(t.bikeKm) || 0) * 0.072 +
+    (parseFloat(t.busKm) || 0) * 0.105 +
+    (parseFloat(t.trainKm) || 0) * 0.041 +
+    ((parseFloat(t.flightKm) || 0) / 52) * 0.146;
 
   // ==========================
   // 2. HOME ENERGY
   // ==========================
   const h = data.home || {};
 
-  const home =
-    (parseFloat(h.electricityKwh) || 0) * 0.1 +    // weekly electricity emissions (reduced from 0.82)
-    (parseFloat(h.lpgCylinders) || 0) * 2.5 +      // weekly LPG factor (reduced from 12.7)
-    (parseFloat(h.waterUsage) || 0) * 0.0001;      // weekly water usage factor
+  const sourceFactor = {
+    renewable: 0.20,
+    mixed: 0.45,
+    nonrenewable: 0.70
+  };
 
+  const heatingFactor = {
+    electric: 0.8,
+    gas: 2.5,
+    wood: 1.2
+  };
+
+  const electricityMonthly =
+    (parseFloat(h.electricityKwh) || 0) *
+    (sourceFactor[h.energySource] || 0.45);
+
+  const lpgMonthly = (parseFloat(h.lpgCylinders) || 0) * 29.0;
+  const waterMonthly = (parseFloat(h.waterUsage) || 0) * 0.0003;
+  const heatingMonthly =
+    (parseFloat(h.householdSize) || 1) *
+    (heatingFactor[h.heatingFuel] || 0);
+
+  const home =
+    (electricityMonthly + lpgMonthly + waterMonthly + heatingMonthly) / 4.345;
 
   // ==========================
   // 3. FOOD & DIET
   // ==========================
-  const f = data.fooddiet || {};
+  const f = data.food || data.fooddiet || {};
 
-  const dietFactors = {
-    omnivore: 2.5,     // lower & realistic
-    vegetarian: 1.7,
-    vegan: 1.5,
-  };
+  let base = 0;
 
-  // Meat impact (monthly realistic values)
-  const meatScore =
-    f.meatConsumption === "daily" ? 15 :
-    f.meatConsumption === "weekly" ? 5 :
-    1;
+  switch (f.dietType) {
+    case "vegan":
+      base = 15;
+      break;
+    case "vegetarian":
+      base = 22;
+      break;
+    case "pescatarian":
+      base = 28;
+      break;
+    case "omnivore":
+      base = 38;
+      break;
+    default:
+      base = 0;
+  }
 
-  const food =
-    (dietFactors[f.dietType] || 2.3) * 7 +     // weekly food emissions (reduced from 20)
-    meatScore -
-    ((parseFloat(f.localFoodPercentage) || 0) * 0.05); // weekly local food reduction
+  const meatFrequency = f.meatFrequency || f.meatConsumption || "never";
 
+  let meatAdj = 0;
+  if (f.dietType === "omnivore" || f.dietType === "pescatarian") {
+    switch (meatFrequency) {
+      case "daily":
+        meatAdj = 10;
+        break;
+      case "weekly":
+        meatAdj = 5;
+        break;
+      case "occasionally":
+        meatAdj = 2;
+        break;
+      case "never":
+        meatAdj = 0;
+        break;
+      default:
+        meatAdj = 0;
+    }
+  }
+
+  const localAdj =
+    ((100 - (parseFloat(f.localFoodPercentage) || 0)) / 100) * 6;
+
+  let wasteAdj = 0;
+  switch (f.foodWaste) {
+    case "low":
+      wasteAdj = 1;
+      break;
+    case "moderate":
+      wasteAdj = 4;
+      break;
+    case "high":
+      wasteAdj = 8;
+      break;
+    default:
+      wasteAdj = 0;
+  }
+
+  const food = base + meatAdj + localAdj + wasteAdj;
 
   // ==========================
   // 4. WASTE
   // ==========================
   const w = data.waste || {};
 
-  const waste =
-    (parseFloat(w.weeklyWasteKg) || 0) * 0.5 +    // weekly waste emissions (reduced from 2)
-    (w.recycle ? -2 : 0) +                        // weekly recycling benefit (reduced from -5)
-    (w.compost ? -3 : 0);                         // weekly composting benefit (reduced from -7)
+  let waste = (parseFloat(w.weeklyWasteKg) || 0) * 0.55;
 
+  if (w.recycle === true || w.recycle === "true") {
+    waste *= 0.82;
+  }
+
+  if (w.compost === true || w.compost === "true") {
+    waste *= 0.88;
+  }
 
   // ==========================
   // 5. TOTAL
@@ -69,7 +142,7 @@ module.exports = function calculateCarbon(data) {
       travel: Number(travel.toFixed(2)),
       home: Number(home.toFixed(2)),
       food: Number(food.toFixed(2)),
-      waste: Number(waste.toFixed(2)),
+      waste: Number(waste.toFixed(2))
     }
   };
 };

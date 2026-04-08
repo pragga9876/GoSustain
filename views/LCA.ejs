@@ -1,21 +1,23 @@
-
 <% pageCSS = ["LCA"] %>
 
-
-<div class="phone-wrapper" style="margin-top: 80px;">   <!-- pushed down for navbar -->
+<div class="phone-wrapper" style="margin-top: 80px;">
     <div class="container">
 
         <h2>Life Cycle Analysis</h2>
 
         <div class="input-row">
-            <input type="text" placeholder="Enter Product (e.g., T-Shirt, Water Bottle)">
-            <button>Analyze Impact</button>
+            <input
+                type="text"
+                id="productInput"
+                placeholder="Enter Product (e.g., T-Shirt, Water Bottle)"
+            >
+            <button id="analyzeBtn" type="button">Analyze Impact</button>
         </div>
 
         <div class="impact-section">
 
             <div class="impact-left">
-                <img id="productImage" src="/images/defaultLCA.png" alt="leaf">
+                <img id="productImage" src="/images/defaultLCA.png" alt="product">
                 <p class="co2" id="co2Value">---</p>
             </div>
 
@@ -26,7 +28,6 @@
 
         </div>
 
-        <!-- Breakdown Section -->
         <div class="breakdown-box">
 
             <div class="item">
@@ -63,7 +64,6 @@
 
         </div>
 
-        <!-- Tips Section -->
         <div class="tips">
             <h3>Reduce Your Impact</h3>
             <ul>
@@ -73,6 +73,35 @@
             </ul>
         </div>
 
+        <div class="tips">
+            <h3>Carbon Score</h3>
+            <p id="gradeValue" style="font-size:22px; font-weight:bold;">--</p>
+        </div>
+
+        <div class="tips">
+            <h3>Global Comparison</h3>
+            <p id="comparisonText">--</p>
+        </div>
+
+        <div class="tips">
+            <h3>Download Report</h3>
+            <button id="downloadBtn">Download Report</button>
+        </div>
+
+        <!-- Added detailed analysis block -->
+        <div class="tips" id="detailsBox" style="margin-top:16px;">
+            <h3>Detailed Analysis</h3>
+            <p id="detailsText" style="font-size:14px; color:#555; line-height:1.5;">No analysis yet.</p>
+        </div>
+
+        <!-- Added assumptions block -->
+        <div class="tips" id="assumptionsBox" style="margin-top:16px;">
+            <h3>Assumptions Used</h3>
+            <ul id="assumptionList"></ul>
+        </div>
+
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="/js/LCA.js"></script>

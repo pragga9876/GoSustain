@@ -1,6 +1,6 @@
 <% pageCSS = ["theme", "food"]; %>
 
-<div class="fooddiet-page">   <!-- UNIQUE PAGE WRAPPER -->
+<div class="fooddiet-page">
 
 <div class="app-container">
 
@@ -28,7 +28,7 @@
       <div class="input-section">
 
         <label>Diet Type</label>
-        <select name="dietType" class="select-box" required>
+        <select name="dietType" id="dietType" class="select-box" required>
           <option value="" disabled selected>Select diet type</option>
           <option value="vegan">Vegan</option>
           <option value="vegetarian">Vegetarian</option>
@@ -36,14 +36,16 @@
           <option value="omnivore">Non-Vegetarian</option>
         </select>
 
-        <label>Meat Consumption Frequency</label>
-        <select name="meatFrequency" class="select-box" required>
-          <option value="" disabled selected>Select frequency</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Few times a week</option>
-          <option value="occasionally">Occasionally</option>
-          <option value="never">Never</option>
-        </select>
+        <div id="meatFrequencyWrapper">
+          <label>Meat Consumption Frequency</label>
+          <select name="meatFrequency" id="meatFrequency" class="select-box" required>
+            <option value="" disabled selected>Select frequency</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Few times a week</option>
+            <option value="occasionally">Occasionally</option>
+            <option value="never">Never</option>
+          </select>
+        </div>
 
         <label>Local Food Percentage <span id="localValue">50%</span></label>
         <div class="slider-group">
@@ -52,12 +54,20 @@
         </div>
 
         <label>Food Waste</label>
-        <select name="foodWaste" class="select-box">
+        <select name="foodWaste" id="foodWaste" class="select-box" required>
           <option value="" disabled selected>Select level</option>
           <option value="low">Low</option>
           <option value="moderate">Moderate</option>
           <option value="high">High</option>
         </select>
+
+        <input type="hidden" name="foodEstimate" id="foodEstimateHidden" value="0">
+
+        <div class="button-group">
+          <div class="counter">
+            <span id="foodEstimatePreview">0.0 kg CO₂ / week</span>
+          </div>
+        </div>
 
       </div>
 
@@ -74,37 +84,112 @@
 
 </div>
 
-</div> <!-- END WRAPPER -->
-
+</div>
 
 <script>
   document.querySelector('.back-arrow').addEventListener('click', () => {
     window.history.back();
   });
 
-  // Fixed slider functionality with CSS variable update
   const localRange = document.getElementById("localRange");
   const localValue = document.getElementById("localValue");
-  
+  const dietType = document.getElementById("dietType");
+  const meatFrequency = document.getElementById("meatFrequency");
+  const meatFrequencyWrapper = document.getElementById("meatFrequencyWrapper");
+  const foodWaste = document.getElementById("foodWaste");
+  const foodEstimatePreview = document.getElementById("foodEstimatePreview");
+  const foodEstimateHidden = document.getElementById("foodEstimateHidden");
+
   function updateSlider(sliderElement, valueElement) {
-    const value = sliderElement.value;
-    const min = sliderElement.min || 0;
-    const max = sliderElement.max || 100;
+    const value = Number(sliderElement.value);
+    const min = Number(sliderElement.min || 0);
+    const max = Number(sliderElement.max || 100);
     const percent = ((value - min) / (max - min)) * 100;
-    
-    // Update the text value
+
     valueElement.textContent = value + "%";
-    
-    // Update the CSS variable for the track background gradient
     sliderElement.style.setProperty('--value-percent', `${percent}%`);
   }
-  
+
+  function updateDietLogic() {
+    const selectedDiet = dietType.value;
+
+    if (selectedDiet === "vegan" || selectedDiet === "vegetarian") {
+      meatFrequency.value = "never";
+      meatFrequencyWrapper.style.display = "none";
+      meatFrequency.required = false;
+    } else {
+      meatFrequencyWrapper.style.display = "block";
+      meatFrequency.required = true;
+    }
+  }
+
+  function calculateFoodEstimate() {
+    const selectedDiet = dietType.value;
+    const selectedMeat = meatFrequency.value;
+    const localPct = Number(localRange.value || 0);
+    const wasteLevel = foodWaste.value;
+
+    let base = 0;
+
+    switch (selectedDiet) {
+      case "vegan":
+        base = 15;
+        break;
+      case "vegetarian":
+        base = 22;
+        break;
+      case "pescatarian":
+        base = 28;
+        break;
+      case "omnivore":
+        base = 38;
+        break;
+      default:
+        base = 0;
+    }
+
+    let meatAdj = 0;
+    if (selectedDiet === "omnivore" || selectedDiet === "pescatarian") {
+      switch (selectedMeat) {
+        case "daily": meatAdj = 10; break;
+        case "weekly": meatAdj = 5; break;
+        case "occasionally": meatAdj = 2; break;
+        case "never": meatAdj = 0; break;
+      }
+    }
+
+    let localAdj = ((100 - localPct) / 100) * 6;
+
+    let wasteAdj = 0;
+    switch (wasteLevel) {
+      case "low": wasteAdj = 1; break;
+      case "moderate": wasteAdj = 4; break;
+      case "high": wasteAdj = 8; break;
+    }
+
+    const total = (base + meatAdj + localAdj + wasteAdj);
+    const rounded = total.toFixed(1);
+
+    foodEstimatePreview.textContent = `${rounded} kg CO₂ / week`;
+    foodEstimateHidden.value = rounded;
+  }
+
   localRange.addEventListener("input", () => {
     updateSlider(localRange, localValue);
+    calculateFoodEstimate();
   });
-  
-  // Initialize slider on page load
+
+  dietType.addEventListener("change", () => {
+    updateDietLogic();
+    calculateFoodEstimate();
+  });
+
+  meatFrequency.addEventListener("change", calculateFoodEstimate);
+  foodWaste.addEventListener("change", calculateFoodEstimate);
+
   document.addEventListener('DOMContentLoaded', () => {
     updateSlider(localRange, localValue);
+    updateDietLogic();
+    calculateFoodEstimate();
   });
 </script>

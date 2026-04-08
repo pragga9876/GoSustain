@@ -7,41 +7,54 @@ const calculationSchema = new mongoose.Schema({
     required: true
   },
 
-  // 1️⃣ Travel
   travel: {
-    carKm: Number,
-    bikeKm: Number,
-    busKm: Number,
-    trainKm: Number,
-    flightHours: Number
+    carKm: { type: Number, default: 0 },
+    bikeKm: { type: Number, default: 0 },
+    busKm: { type: Number, default: 0 },
+    trainKm: { type: Number, default: 0 },
+    flightKm: { type: Number, default: 0 },
+    vehicleType: { type: String, default: "" }
   },
 
-  // 2️⃣ Home Energy
   home: {
-    electricityKwh: Number,
-    lpgCylinders: Number,
-    waterUsage: Number
+    electricityKwh: { type: Number, default: 0 },
+    householdSize: { type: Number, default: 1 },
+    energySource: { type: String, default: "" },
+    heatingFuel: { type: String, default: "" },
+    lpgCylinders: { type: Number, default: 0 },
+    waterUsage: { type: Number, default: 0 }
   },
 
-  // 3️⃣ Food & Diet
   food: {
-    dietType: String,            // omnivore / vegetarian / vegan
-    meatFrequency: String,       // daily / weekly / rarely
-    localFoodPercentage: Number
+    dietType: { type: String, default: "" },
+    meatFrequency: { type: String, default: "" },
+    localFoodPercentage: { type: Number, default: 0 },
+    foodWaste: { type: String, default: "" }
   },
 
-  // 4️⃣ Waste & Recycling
   waste: {
-    weeklyWasteKg: Number,
-    recycle: Boolean,
-    compost: Boolean
+    weeklyWasteKg: { type: Number, default: 0 },
+    recycle: { type: Boolean, default: false },
+    compost: { type: Boolean, default: false }
   },
 
-  totalCarbon: Number, // Calculated using utils/calculatecarbon.js
+  breakdown: {
+    travel: { type: Number, default: 0 },
+    home: { type: Number, default: 0 },
+    food: { type: Number, default: 0 },
+    waste: { type: Number, default: 0 }
+  },
+
+  totalCarbon: {
+    type: Number,
+    default: 0
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model("Calculation", calculationSchema);
+module.exports =
+  mongoose.models.Calculation || mongoose.model("Calculation", calculationSchema);

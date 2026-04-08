@@ -22,6 +22,7 @@ const airefyRoutes = require("./routes/airefy");
 const ecoTwin = require("./routes/ecotwin");
 const mapRoutes = require("./routes/map");
 const receiptRouter = require("./routes/receipt");
+const lcaRouter = require("./routes/lca");
 
 dotenv.config();
 
@@ -103,6 +104,7 @@ app.use("/airefy", airefyRoutes);
 app.use("/eco", ecoTwin);
 app.use("/map", mapRoutes);
 app.use("/api/receipt", receiptRouter);
+app.use("/lca", lcaRouter);
 
 // Server Start
 const PORT = process.env.PORT || 3000;

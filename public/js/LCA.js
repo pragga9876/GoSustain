@@ -1,145 +1,9 @@
-// ======= MASTER MOCK DATA (ALL 10 ITEMS) =======
-const mockData = {
-    "t-shirt": {
-        co2: 0.8,
-        impact: "MEDIUM",
-        production: 40,
-        transportation: 10,
-        usage: 20,
-        disposal: 30,
-        tips: [
-            "Prefer garments certified for lower-impact production (e.g., GOTS or OEKO-TEX) to reduce upstream emissions.",
-            "Increase use-phase efficiency: wash in cold water and line-dry to cut lifetime energy use.",
-            "Buy second-hand or buy fewer higher-quality pieces to lower per-use embodied carbon."
-        ]
-    },
-    "water bottle": {
-        co2: 1.2,
-        impact: "HIGH",
-        production: 60,
-        transportation: 10,
-        usage: 5,
-        disposal: 25,
-        tips: [
-            "Choose reusable stainless steel or glass bottles with long guaranteed lifetimes to amortize production emissions.",
-            "Prefer locally manufactured bottles or refill stations to reduce transport-related CO₂e.",
-            "If plastic, select bottles with high recycled content (rPET) and recycle them through proper streams."
-        ]
-    },
-    "smartphone": {
-        co2: 55,
-        impact: "VERY HIGH",
-        production: 70,
-        transportation: 10,
-        usage: 15,
-        disposal: 5,
-        tips: [
-            "Extend service life by 2–3 years and prioritize software updates over replacement to reduce annualized emissions.",
-            "When replacing, consider refurbished models or buy devices with modular/repairable designs.",
-            "Recycle through certified e-waste programs to recover critical metals and avoid toxic end-of-life impacts."
-        ]
-    },
-    "plastic bag": {
-        co2: 0.1,
-        impact: "LOW",
-        production: 50,
-        transportation: 20,
-        usage: 10,
-        disposal: 20,
-        tips: [
-            "Replace single-use plastic bags with durable reusable bags (cotton or recycled PET) to cut lifetime waste.",
-            "Reuse existing bags multiple times and prefer shops that offer refill or bring-your-own schemes.",
-            "Avoid burning or open disposal; use municipal recycling/collection to reduce environmental harm."
-        ]
-    },
-    "jeans": {
-        co2: 3.5,
-        impact: "MEDIUM-HIGH",
-        production: 50,
-        transportation: 10,
-        usage: 30,
-        disposal: 10,
-        tips: [
-            "Buy from brands using lower-impact fibres (recycled denim or organic cotton) to reduce manufacturing emissions.",
-            "Increase per-item use: repair, tailor and wear longer to lower the per-wear carbon footprint.",
-            "Choose low-temperature washing and line-drying; consider professional repair instead of replacement."
-        ]
-    },
-    "shoes": {
-        co2: 2.0,
-        impact: "MEDIUM",
-        production: 60,
-        transportation: 15,
-        usage: 10,
-        disposal: 15,
-        tips: [
-            "Select durable designs and materials (repairable soles, replaceable components) to extend service life.",
-            "Opt for brands with transparent supply chains and recycled or bio-based materials where possible.",
-            "Maintain and resoling where available — repairing can cut lifetime emissions far below buying new."
-        ]
-    },
-    "laptop": {
-        co2: 200,
-        impact: "VERY HIGH",
-        production: 80,
-        transportation: 5,
-        usage: 10,
-        disposal: 5,
-        tips: [
-            "Prioritize refurbished or business-grade units with longer warranty and upgrade paths to reduce embodied carbon.",
-            "Optimize use-phase energy: enable power-saving profiles and avoid 24/7 charging to cut operational emissions.",
-            "When retiring, recycle through certified e-steward programs so critical materials are recovered and toxics are managed."
-        ]
-    },
-    "book": {
-        co2: 0.7,
-        impact: "LOW",
-        production: 55,
-        transportation: 25,
-        usage: 10,
-        disposal: 10,
-        tips: [
-            "Buy second-hand or share books through libraries to reduce demand for virgin paper and transport emissions.",
-            "Prefer books printed on FSC-certified paper or with high recycled content to lower forestry impacts.",
-            "Donate or pass on books after use to increase the number of reads per production-unit."
-        ]
-    },
-    "milk carton": {
-        co2: 0.5,
-        impact: "LOW-MEDIUM",
-        production: 40,
-        transportation: 40,
-        usage: 5,
-        disposal: 15,
-        tips: [
-            "Choose locally produced dairy or plant-based alternatives to reduce transport and supply-chain emissions.",
-            "Prefer cartons with clear recycling streams or returnable/refill systems to limit end-of-life impact.",
-            "Minimise food waste by planning purchases and using full contents — wastage multiplies the product’s footprint."
-        ]
-    },
-    "headphones": {
-        co2: 1.8,
-        impact: "MEDIUM",
-        production: 65,
-        transportation: 10,
-        usage: 20,
-        disposal: 5,
-        tips: [
-            "Choose modular or repairable headphones and replace cables or pads rather than the whole unit.",
-            "Buy durable models from manufacturers with transparent materials and take-back programs.",
-            "Use product warranties and certified repair services to extend service life and reduce replacement frequency."
-        ]
-    }
-};
+const input = document.getElementById("productInput");
+const button = document.getElementById("analyzeBtn");
 
-
-
-// ======= DOM ELEMENTS =======
-const input = document.querySelector(".input-row input");
-const button = document.querySelector(".input-row button");
-
-const co2El = document.querySelector(".co2");
-const impactEl = document.querySelector(".overall-value");
+const productImage = document.getElementById("productImage");
+const co2El = document.getElementById("co2Value");
+const impactEl = document.getElementById("impactValue");
 
 const prodFill = document.getElementById("prodFill");
 const transFill = document.getElementById("transFill");
@@ -155,71 +19,255 @@ const tip1 = document.getElementById("tip1");
 const tip2 = document.getElementById("tip2");
 const tip3 = document.getElementById("tip3");
 
+const detailsText = document.getElementById("detailsText");
+const assumptionList = document.getElementById("assumptionList");
 
+// Optional premium fields — only work if present in EJS
+const gradeEl = document.getElementById("gradeValue");
+const comparisonEl = document.getElementById("comparisonText");
+const downloadBtn = document.getElementById("downloadBtn");
 
-// ====== BUTTON CLICK ======
-button.addEventListener("click", () => {
-    const product = input.value.trim().toLowerCase();
+button.addEventListener("click", analyzeProduct);
 
-    // EMPTY SEARCH → RESET
-    if (product === "") {
-        resetUI();
-        return;
-    }
-
-    // NOT FOUND
-    if (!mockData[product]) {
-        resetUI();
-        alert("Product not found!");
-        return;
-    }
-
-    // FOUND → UPDATE
-    updateUI(mockData[product]);
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    analyzeProduct();
+  }
 });
 
-
-
-// ====== UPDATE UI ======
-function updateUI(item) {
-
-    co2El.textContent = item.co2 + " kg CO₂e";
-    impactEl.textContent = item.impact;
-
-    prodFill.style.width = item.production + "%";
-    transFill.style.width = item.transportation + "%";
-    usageFill.style.width = item.usage + "%";
-    dispFill.style.width = item.disposal + "%";
-
-    prodPercent.textContent = item.production + "%";
-    transPercent.textContent = item.transportation + "%";
-    usagePercent.textContent = item.usage + "%";
-    dispPercent.textContent = item.disposal + "%";
-
-    tip1.textContent = item.tips[0];
-    tip2.textContent = item.tips[1];
-    tip3.textContent = item.tips[2];
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", downloadReport);
 }
 
+async function analyzeProduct() {
+  const product = input.value.trim();
 
+  if (!product) {
+    resetUI();
+    alert("Please enter a product name.");
+    return;
+  }
 
-// ====== RESET UI ======
+  button.disabled = true;
+  setLoadingUI();
+
+  try {
+    const response = await fetch("/lca/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ product })
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      resetUI();
+      alert(data.message || "Could not analyze this product.");
+      return;
+    }
+
+    updateUI(data.result);
+  } catch (error) {
+    console.error("LCA Error:", error);
+    resetUI();
+    alert("Something went wrong while analyzing the product.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function setLoadingUI() {
+  co2El.textContent = "Analyzing...";
+  impactEl.textContent = "Loading...";
+
+  detailsText.textContent = "Generating detailed life cycle analysis...";
+
+  tip1.textContent = "";
+  tip2.textContent = "";
+  tip3.textContent = "";
+
+  prodFill.style.width = "0%";
+  transFill.style.width = "0%";
+  usageFill.style.width = "0%";
+  dispFill.style.width = "0%";
+
+  prodPercent.textContent = "...";
+  transPercent.textContent = "...";
+  usagePercent.textContent = "...";
+  dispPercent.textContent = "...";
+
+  assumptionList.innerHTML = "";
+
+  productImage.src = "/images/defaultLCA.png";
+
+  if (gradeEl) gradeEl.textContent = "Loading...";
+  if (comparisonEl) comparisonEl.textContent = "Calculating...";
+}
+
+function updateUI(item) {
+  const co2 = safeNumber(item.co2);
+  const production = clampPercent(item.production);
+  const transportation = clampPercent(item.transportation);
+  const usage = clampPercent(item.usage);
+  const disposal = clampPercent(item.disposal);
+
+  co2El.textContent = `${co2} kg CO₂e`;
+  impactEl.textContent = item.impact || "MEDIUM";
+
+  prodFill.style.width = `${production}%`;
+  transFill.style.width = `${transportation}%`;
+  usageFill.style.width = `${usage}%`;
+  dispFill.style.width = `${disposal}%`;
+
+  prodPercent.textContent = `${production}%`;
+  transPercent.textContent = `${transportation}%`;
+  usagePercent.textContent = `${usage}%`;
+  dispPercent.textContent = `${disposal}%`;
+
+  tip1.textContent = item.tips?.[0] || "";
+  tip2.textContent = item.tips?.[1] || "";
+  tip3.textContent = item.tips?.[2] || "";
+
+  detailsText.textContent = item.details || "No detailed analysis available.";
+
+  assumptionList.innerHTML = "";
+  if (Array.isArray(item.assumptions) && item.assumptions.length) {
+    item.assumptions.forEach((assumption) => {
+      const li = document.createElement("li");
+      li.textContent = assumption;
+      assumptionList.appendChild(li);
+    });
+  }
+
+  if (item.image && typeof item.image === "string" && item.image.trim()) {
+    productImage.src = item.image;
+  } else {
+    productImage.src = "/images/defaultLCA.png";
+  }
+
+  if (gradeEl) {
+    gradeEl.textContent = item.grade || calculateGrade(co2);
+  }
+
+  if (comparisonEl) {
+    comparisonEl.textContent = item.comparison || generateComparisonText(co2);
+  }
+}
+
 function resetUI() {
+  co2El.textContent = "---";
+  impactEl.textContent = "---";
 
-    co2El.textContent = "—";
-    impactEl.textContent = "—";
+  prodFill.style.width = "0%";
+  transFill.style.width = "0%";
+  usageFill.style.width = "0%";
+  dispFill.style.width = "0%";
 
-    prodFill.style.width = "0%";
-    transFill.style.width = "0%";
-    usageFill.style.width = "0%";
-    dispFill.style.width = "0%";
+  prodPercent.textContent = "0%";
+  transPercent.textContent = "0%";
+  usagePercent.textContent = "0%";
+  dispPercent.textContent = "0%";
 
-    prodPercent.textContent = "0%";
-    transPercent.textContent = "0%";
-    usagePercent.textContent = "0%";
-    dispPercent.textContent = "0%";
+  tip1.textContent = "";
+  tip2.textContent = "";
+  tip3.textContent = "";
 
-    tip1.textContent = "";
-    tip2.textContent = "";
-    tip3.textContent = "";
+  detailsText.textContent = "No analysis yet.";
+  assumptionList.innerHTML = "";
+  productImage.src = "/images/defaultLCA.png";
+
+  if (gradeEl) gradeEl.textContent = "--";
+  if (comparisonEl) comparisonEl.textContent = "--";
+}
+
+function safeNumber(value) {
+  const num = Number(value);
+  if (Number.isNaN(num)) return 0;
+  return Number(num.toFixed(2));
+}
+
+function clampPercent(value) {
+  let num = Number(value);
+  if (Number.isNaN(num)) num = 0;
+  if (num < 0) num = 0;
+  if (num > 100) num = 100;
+  return Math.round(num);
+}
+
+function calculateGrade(co2) {
+  if (co2 <= 1) return "A+";
+  if (co2 <= 2) return "A";
+  if (co2 <= 4) return "B";
+  if (co2 <= 7) return "C";
+  if (co2 <= 10) return "D";
+  return "F";
+}
+
+function generateComparisonText(co2) {
+  const globalAvg = 5;
+
+  if (co2 === 0) return "No comparison available.";
+  if (co2 === globalAvg) return "This is close to the global average.";
+
+  if (co2 > globalAvg) {
+    const diff = (((co2 - globalAvg) / globalAvg) * 100).toFixed(0);
+    return `${diff}% higher than average product footprint.`;
+  } else {
+    const diff = (((globalAvg - co2) / globalAvg) * 100).toFixed(0);
+    return `${diff}% lower than average product footprint.`;
+  }
+}
+
+async function downloadReport() {
+  try {
+    if (!window.jspdf || !window.html2canvas) {
+      alert("PDF libraries are not loaded.");
+      return;
+    }
+
+    const container = document.querySelector(".container");
+    if (!container) {
+      alert("Report area not found.");
+      return;
+    }
+
+    const canvas = await window.html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth - 20;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 10;
+
+    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+    heightLeft -= (pageHeight - 20);
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight + 10;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - 20);
+    }
+
+    const productName = input.value.trim() || "LCA_Report";
+    const fileName = `${productName.replace(/\s+/g, "_")}_LCA_Report.pdf`;
+    pdf.save(fileName);
+  } catch (error) {
+    console.error("PDF Download Error:", error);
+    alert("Could not generate PDF report.");
+  }
 }
