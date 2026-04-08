@@ -33,13 +33,24 @@ function initMap() {
             map.invalidateSize();
         }, 300);
 
+        window.addEventListener('resize', function () {
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+            }, 100);
+        });
+
+        window.addEventListener('orientationchange', function () {
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+            }, 500);
+        });
+
         console.log('Map initialized successfully');
     } catch (error) {
         console.error('Map init error:', error);
     }
 }
 
-// Route colors
 const routeColors = [
     { color: '#10b981', name: 'eco-route' },
     { color: '#f59e0b', name: 'balanced-route' },
@@ -57,7 +68,6 @@ function toggleTheme() {
     localStorage.setItem('darkMode', isDark);
 }
 
-// Safe theme init after DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
     const themeIcon = document.getElementById('theme-icon');
     if (localStorage.getItem('darkMode') === 'true') {
@@ -68,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// CO2 factors in g/km
 const emissionFactors = {
     driving: 192,
     walking: 0,
@@ -76,12 +85,12 @@ const emissionFactors = {
     transit: 68
 };
 
-// Extra factor for stop-and-go and route complexity
 function estimateRouteComplexityPenalty(route) {
     const coords = route?.geometry?.coordinates || [];
     if (coords.length < 3) return 1;
 
     let turnCount = 0;
+
     for (let i = 1; i < coords.length - 1; i++) {
         const p1 = coords[i - 1];
         const p2 = coords[i];
@@ -89,6 +98,7 @@ function estimateRouteComplexityPenalty(route) {
 
         const a1 = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
         const a2 = Math.atan2(p3[1] - p2[1], p3[0] - p2[0]);
+
         let diff = Math.abs((a2 - a1) * 180 / Math.PI);
         if (diff > 180) diff = 360 - diff;
 
@@ -98,7 +108,6 @@ function estimateRouteComplexityPenalty(route) {
     return 1 + Math.min(turnCount * 0.01, 0.15);
 }
 
-// More realistic route-specific CO2
 function calculateRouteCO2(mode, distanceKm, durationMin, route) {
     const factor = emissionFactors[mode] || 0;
 
@@ -121,7 +130,6 @@ function calculateRouteCO2(mode, distanceKm, durationMin, route) {
     return Math.round(distanceKm * factor * congestionPenalty * complexityPenalty);
 }
 
-// Rank routes relative to each other so best one becomes eco-friendly
 function scoreAndRankRoutes(rawRoutes, mode) {
     if (!rawRoutes.length) return [];
 
@@ -175,7 +183,6 @@ function scoreAndRankRoutes(rawRoutes, mode) {
     return rawRoutes;
 }
 
-// Geocode address
 async function geocodeAddress(address) {
     try {
         const trimmed = address.trim();
@@ -193,7 +200,7 @@ async function geocodeAddress(address) {
 
         const response = await fetch(url, {
             headers: {
-                'Accept': 'application/json'
+                Accept: 'application/json'
             },
             signal: AbortSignal.timeout(15000)
         });
@@ -204,6 +211,7 @@ async function geocodeAddress(address) {
         }
 
         const data = await response.json();
+
         if (data && data.length > 0) {
             return {
                 lat: parseFloat(data[0].lat),
@@ -219,13 +227,11 @@ async function geocodeAddress(address) {
     }
 }
 
-// Build OSRM URL with real alternative routes
 function buildOSRMUrl(fromCoords, toCoords, profile) {
     const base = 'https://router.project-osrm.org/route/v1';
     return `${base}/${profile}/${fromCoords.lon},${fromCoords.lat};${toCoords.lon},${toCoords.lat}?alternatives=true&steps=false&geometries=geojson&overview=full&annotations=false`;
 }
 
-// Clear routes from map
 function clearMap() {
     routeLayers.forEach(layer => map.removeLayer(layer));
     markerLayers.forEach(layer => map.removeLayer(layer));
@@ -234,7 +240,6 @@ function clearMap() {
     allRoutes = [];
 }
 
-// Draw routes on map
 function drawRoutes(routes) {
     try {
         routeLayers.forEach(layer => map.removeLayer(layer));
@@ -246,25 +251,23 @@ function drawRoutes(routes) {
             if (!route.polyline || !route.polyline.coordinates) return;
 
             const latlngs = route.polyline.coordinates.map(c => L.latLng(c[1], c[0]));
+
             const polyline = L.polyline(latlngs, {
                 color: route.color,
-                weight: idx === selectedRouteIndex ? 8 : 5,
+                weight: idx === selectedRouteIndex ? 8 : 6,
                 opacity: idx === selectedRouteIndex ? 1 : 0.65,
-                dashArray: idx === selectedRouteIndex ? null : '10,6',
+                dashArray: idx === selectedRouteIndex ? null : '8, 4',
                 lineCap: 'round',
                 lineJoin: 'round'
             }).addTo(map);
 
-            polyline.on('click', () => {
-                selectRoute(idx, routes);
-            });
-
+            polyline.on('click', () => selectRoute(idx, routes));
             routeLayers.push(polyline);
         });
 
         const startMarker = L.marker([currentFromCoords.lat, currentFromCoords.lon], {
             icon: L.divIcon({
-                html: '<div style="background: #10b981; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35); font-weight: bold;">A</div>',
+                html: '<div style="background: #10b981; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-weight: bold;">A</div>',
                 iconSize: [40, 40],
                 iconAnchor: [20, 20],
                 className: ''
@@ -273,7 +276,7 @@ function drawRoutes(routes) {
 
         const endMarker = L.marker([currentToCoords.lat, currentToCoords.lon], {
             icon: L.divIcon({
-                html: '<div style="background: #ef4444; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.35); font-weight: bold;">B</div>',
+                html: '<div style="background: #ef4444; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-weight: bold;">B</div>',
                 iconSize: [40, 40],
                 iconAnchor: [20, 20],
                 className: ''
@@ -294,7 +297,6 @@ function drawRoutes(routes) {
     }
 }
 
-// Display routes in sidebar
 function displayRoutes(routes) {
     try {
         const container = document.getElementById('routes-container');
@@ -350,19 +352,15 @@ function displayRoutes(routes) {
     }
 }
 
-// Select route
 function selectRoute(idx, routes) {
     selectedRouteIndex = idx;
-
     document.querySelectorAll('.route-option').forEach((el, i) => {
         el.classList.toggle('selected', i === idx);
     });
-
     drawRoutes(routes);
     console.log('Route', idx, 'selected');
 }
 
-// Convert UI mode to OSRM profile
 function getOsrmProfile(mode) {
     if (mode === 'walking') return 'foot';
     if (mode === 'cycling') return 'bike';
@@ -370,7 +368,6 @@ function getOsrmProfile(mode) {
     return 'driving';
 }
 
-// Fetch real alternative routes from OSRM
 async function fetchRealRoutes(fromCoords, toCoords, mode) {
     const profile = getOsrmProfile(mode);
     const url = buildOSRMUrl(fromCoords, toCoords, profile);
@@ -390,9 +387,7 @@ async function fetchRealRoutes(fromCoords, toCoords, mode) {
         throw new Error('No routes found');
     }
 
-    const limitedRoutes = routes.slice(0, 3);
-
-    let parsed = limitedRoutes.map(route => {
+    let parsed = routes.slice(0, 3).map(route => {
         const distanceKm = +(route.distance / 1000).toFixed(2);
         const durationMin = Math.max(1, Math.round(route.duration / 60));
         const co2 = calculateRouteCO2(mode, distanceKm, durationMin, route);
@@ -410,7 +405,6 @@ async function fetchRealRoutes(fromCoords, toCoords, mode) {
         };
     });
 
-    // Ensure at least 3 cards when OSRM returns fewer alternatives
     if (parsed.length === 1) {
         const base = parsed[0];
         parsed.push({
@@ -441,7 +435,6 @@ async function fetchRealRoutes(fromCoords, toCoords, mode) {
     return scoreAndRankRoutes(parsed, mode);
 }
 
-// Live route refresh
 function stopLiveRefresh() {
     if (liveRefreshTimer) {
         clearInterval(liveRefreshTimer);
@@ -460,7 +453,7 @@ function startLiveRefresh() {
     if (!navigator.geolocation) return;
 
     geoWatchId = navigator.geolocation.watchPosition(
-        async function (position) {
+        function (position) {
             currentFromCoords = {
                 lat: position.coords.latitude,
                 lon: position.coords.longitude,
@@ -488,7 +481,6 @@ function startLiveRefresh() {
     }, 30000);
 }
 
-// Plan route
 async function planRoute(isSilentRefresh = false) {
     const fromAddress = document.getElementById('from-input').value.trim();
     const toAddress = document.getElementById('to-input').value.trim();
@@ -533,11 +525,13 @@ async function planRoute(isSilentRefresh = false) {
         drawRoutes(results);
         displayRoutes(results);
 
-        setTimeout(() => {
+        setTimeout(function () {
             if (map) map.invalidateSize();
         }, 100);
 
-        if (!isSilentRefresh) loadingEl.classList.remove('active');
+        if (!isSilentRefresh) {
+            loadingEl.classList.remove('active');
+        }
 
         if (usingLiveLocationAsStart) {
             startLiveRefresh();
@@ -553,7 +547,6 @@ async function planRoute(isSilentRefresh = false) {
     }
 }
 
-// Update route on mode change
 function updateRoute() {
     const from = document.getElementById('from-input').value.trim();
     const to = document.getElementById('to-input').value.trim();
@@ -563,7 +556,6 @@ function updateRoute() {
     }
 }
 
-// Use current location
 function useCurrentLocation() {
     if (!navigator.geolocation) {
         alert('Geolocation not supported');
@@ -593,19 +585,20 @@ function useCurrentLocation() {
     );
 }
 
-// Show popular places
 function showPopularPlaces() {
     const places = document.getElementById('popular-places');
-    places.style.display = places.style.display === 'none' ? 'grid' : 'none';
+    if (places.style.display === 'none') {
+        places.style.display = 'grid';
+    } else {
+        places.style.display = 'none';
+    }
 }
 
-// Fill destination
 function fillDestination(place) {
     document.getElementById('to-input').value = place;
     document.getElementById('popular-places').style.display = 'none';
 }
 
-// Input listeners
 document.addEventListener('DOMContentLoaded', function () {
     const fromInput = document.getElementById('from-input');
     const toInput = document.getElementById('to-input');
@@ -637,21 +630,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// Touch feedback
 document.addEventListener('touchstart', function (e) {
-    if (e.target.matches('.route-option, .plan-button, .theme-toggle, .suggestion-btn, .place-btn')) {
+    if (e.target.matches('.route-option, .plan-button, .chat-button, .theme-toggle, .suggestion-btn, .place-btn')) {
         e.target.style.opacity = '0.7';
     }
 }, false);
 
 document.addEventListener('touchend', function (e) {
-    if (e.target.matches('.route-option, .plan-button, .theme-toggle, .suggestion-btn, .place-btn')) {
+    if (e.target.matches('.route-option, .plan-button, .chat-button, .theme-toggle, .suggestion-btn, .place-btn')) {
         e.target.style.opacity = '1';
     }
 }, false);
 
-// Initialize on load
 window.addEventListener('load', function () {
+    console.log('Page loaded, initializing...');
+
     setTimeout(function () {
         initMap();
 
@@ -663,7 +656,7 @@ window.addEventListener('load', function () {
                     try {
                         map.setView([pos.coords.latitude, pos.coords.longitude], 13);
                     } catch (e) {
-                        console.log('Geolocation setView error:', e);
+                        console.log('Geolocation error:', e);
                     }
                 },
                 function () {
@@ -674,8 +667,8 @@ window.addEventListener('load', function () {
     }, 100);
 });
 
-// Handle orientation change
 window.addEventListener('orientationchange', function () {
+    console.log('Orientation changed');
     setTimeout(function () {
         if (map) {
             map.invalidateSize();
