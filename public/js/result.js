@@ -1,20 +1,11 @@
-//=====================================================================
-// 1. PAGE INITIALIZATION
-//=====================================================================
-
 document.addEventListener('DOMContentLoaded', () => {
     setupAesthetics();
     initializeDashboard();
 });
 
-//=====================================================================
-// 2. AESTHETICS & EFFECTS
-//=====================================================================
-
 function setupAesthetics() {
     createFloatingParticles();
 
-    // Mouse trail glow effect (limit number of active glows)
     const activeGlows = [];
     document.addEventListener('mousemove', e => {
         const glow = document.createElement('div');
@@ -24,14 +15,12 @@ function setupAesthetics() {
         document.body.appendChild(glow);
         activeGlows.push(glow);
 
-        // Remove after 800ms
         setTimeout(() => {
             glow.remove();
             const index = activeGlows.indexOf(glow);
             if (index > -1) activeGlows.splice(index, 1);
         }, 800);
 
-        // Limit maximum glows to 20
         if (activeGlows.length > 20) {
             activeGlows.shift().remove();
         }
@@ -41,8 +30,6 @@ function setupAesthetics() {
 function createFloatingParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
-
-    // Prevent duplicate particles
     if (container.childElementCount > 0) return;
 
     for (let i = 0; i < 15; i++) {
@@ -57,56 +44,50 @@ function createFloatingParticles() {
     }
 }
 
-//=====================================================================
-// 3. DASHBOARD INITIALIZATION
-//=====================================================================
-
 function initializeDashboard() {
     const totalEl = document.getElementById('yourFootprintValue');
-    const chartCenterValue = document.getElementById('chartCenterValue');
-
-    // Read server-rendered values
     const total = parseFloat(totalEl?.textContent) || 0;
 
-    const breakdownEls = document.querySelectorAll('.category-card');
-    const breakdown = {};
-    breakdownEls.forEach(card => {
-        const cat = card.classList[1]; // travel, energy, food, waste
-        const valueEl = card.querySelector('.category-value');
-        breakdown[cat] = parseFloat(valueEl?.textContent) || 0;
-    });
+    const breakdown = {
+        travel: getCategoryValue('travel'),
+        home: getCategoryValue('home'),
+        food: getCategoryValue('food'),
+        waste: getCategoryValue('waste')
+    };
 
     const percentages = calculatePercentages(breakdown, total);
 
-    // Update summary cards (status)
     const comparisonCard = document.getElementById('comparisonCard');
     if (comparisonCard) {
         const statusInfo = determineStatus(total);
-        comparisonCard.querySelector('.status-text').textContent = statusInfo.text;
-        comparisonCard.querySelector('.status-detail').textContent = statusInfo.detail;
+        const statusText = comparisonCard.querySelector('.status-text');
+        const statusDetail = comparisonCard.querySelector('.status-detail');
+
+        if (statusText) statusText.textContent = statusInfo.text;
+        if (statusDetail) statusDetail.textContent = statusInfo.detail;
         comparisonCard.className = `summary-card comparison-result ${statusInfo.status}`;
     }
 
-    // Update category cards progress bar & percentage
-    updateCategoryCards(breakdown, percentages);
-
-    // Doughnut Chart
+    updateCategoryCards(percentages);
     drawDoughnutChart(breakdown);
-
-    // Insights and badges are already rendered by server, no overwrite needed
+    renderLegend(breakdown, total);
 }
 
-//=====================================================================
-// 4. UTILS
-//=====================================================================
+function getCategoryValue(cat) {
+    const card = document.querySelector(`.category-card.${cat}`);
+    if (!card) return 0;
+    const valueEl = card.querySelector('.category-value');
+    return parseFloat(valueEl?.textContent) || 0;
+}
 
 function calculatePercentages(data, total) {
-    if (total === 0) return { travel: 0, energy: 0, food: 0, waste: 0 };
-    const percentages = {};
-    for (let key in data) {
-        percentages[key] = Math.round((data[key] / total) * 100);
-    }
-    return percentages;
+    if (total === 0) return { travel: 0, home: 0, food: 0, waste: 0 };
+    return {
+        travel: Math.round((data.travel / total) * 100),
+        home: Math.round((data.home / total) * 100),
+        food: Math.round((data.food / total) * 100),
+        waste: Math.round((data.waste / total) * 100)
+    };
 }
 
 function determineStatus(total) {
@@ -115,14 +96,11 @@ function determineStatus(total) {
     return { status: 'high', text: 'High', detail: 'Above Average' };
 }
 
-//=====================================================================
-// 5. CATEGORY CARDS
-//=====================================================================
-
-function updateCategoryCards(data, percentages) {
-    ['travel', 'energy', 'food', 'waste'].forEach(cat => {
+function updateCategoryCards(percentages) {
+    ['travel', 'home', 'food', 'waste'].forEach(cat => {
         const card = document.querySelector(`.category-card.${cat}`);
         if (!card) return;
+
         const percentEl = card.querySelector('.category-percentage');
         const progressEl = card.querySelector('.progress-fill');
 
@@ -131,17 +109,12 @@ function updateCategoryCards(data, percentages) {
     });
 }
 
-//=====================================================================
-// 6. DOUGHNUT CHART
-//=====================================================================
-
 function drawDoughnutChart(data) {
     const ctx = document.getElementById('doughnutChart')?.getContext('2d');
-    if (!ctx) return;
+    if (!ctx || typeof Chart === "undefined") return;
 
-    const values = ['travel', 'energy', 'food', 'waste'].map(cat => parseFloat(data[cat]) || 0);
+    const values = [data.travel, data.home, data.food, data.waste];
 
-    // Destroy previous chart instance if exists
     if (window.doughnutChartInstance) {
         window.doughnutChartInstance.destroy();
     }
@@ -152,12 +125,38 @@ function drawDoughnutChart(data) {
             labels: ['Travel', 'Energy', 'Food', 'Waste'],
             datasets: [{
                 data: values,
-                backgroundColor: ['#EF4444', '#F59E0B', '#10B981', '#8B5CF6']
+                backgroundColor: ['#EF4444', '#F59E0B', '#10B981', '#8B5CF6'],
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { position: 'bottom' } }
+            cutout: '68%',
+            plugins: {
+                legend: { display: false }
+            }
         }
     });
+}
+
+function renderLegend(data, total) {
+    const legend = document.getElementById('chartLegend');
+    if (!legend) return;
+
+    const items = [
+        { label: 'Travel', value: data.travel, color: '#EF4444' },
+        { label: 'Energy', value: data.home, color: '#F59E0B' },
+        { label: 'Food', value: data.food, color: '#10B981' },
+        { label: 'Waste', value: data.waste, color: '#8B5CF6' }
+    ];
+
+    legend.innerHTML = items.map(item => {
+        const pct = total ? Math.round((item.value / total) * 100) : 0;
+        return `
+            <div class="legend-item">
+                <span class="legend-color" style="background:${item.color}; display:inline-block; width:12px; height:12px; border-radius:50%; margin-right:8px;"></span>
+                <span>${item.label}: ${item.value.toFixed(1)} kg (${pct}%)</span>
+            </div>
+        `;
+    }).join('');
 }

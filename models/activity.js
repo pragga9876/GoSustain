@@ -7,31 +7,113 @@ const activitySchema = new mongoose.Schema({
     required: true,
   },
 
-  // ADD "carbon" so calculator results can be saved
   type: {
     type: String,
-    enum: ["travel", "energy", "diet", "carbon"],
+    enum: ["travel", "energy", "diet", "waste", "carbon"],
     required: true,
   },
 
-  description: String,
+  description: {
+    type: String,
+    default: "",
+  },
 
-  // CO₂ emission value
-  co2: { type: Number, default: 0 },
+  co2: {
+    type: Number,
+    default: 0,
+  },
 
   /* --- Travel fields --- */
-  mode: String,       
-  distance: Number,   
+  mode: {
+    type: String,
+    default: "",
+  },
+  distance: {
+    type: Number,
+    default: 0,
+  },
+  vehicleType: {
+    type: String,
+    default: "",
+  },
+  flightKm: {
+    type: Number,
+    default: 0,
+  },
+  busKm: {
+    type: Number,
+    default: 0,
+  },
+  trainKm: {
+    type: Number,
+    default: 0,
+  },
+  bikeKm: {
+    type: Number,
+    default: 0,
+  },
 
   /* --- Energy fields --- */
-  kwh: Number,        
+  kwh: {
+    type: Number,
+    default: 0,
+  },
+  householdSize: {
+    type: Number,
+    default: 1,
+  },
+  energySource: {
+    type: String,
+    default: "",
+  },
+  heatingFuel: {
+    type: String,
+    default: "",
+  },
+  lpgCylinders: {
+    type: Number,
+    default: 0,
+  },
+  waterUsage: {
+    type: Number,
+    default: 0,
+  },
 
   /* --- Diet fields --- */
-  dietType: String,   
+  dietType: {
+    type: String,
+    default: "",
+  },
+  meatFrequency: {
+    type: String,
+    default: "",
+  },
+  localFoodPercentage: {
+    type: Number,
+    default: 0,
+  },
+  foodWaste: {
+    type: String,
+    default: "",
+  },
 
-  /* --- Carbon Calculator can store full details --- */
+  /* --- Waste fields --- */
+  weeklyWasteKg: {
+    type: Number,
+    default: 0,
+  },
+  recycle: {
+    type: Boolean,
+    default: false,
+  },
+  compost: {
+    type: Boolean,
+    default: false,
+  },
+
+  /* --- Full calculator details --- */
   details: {
-    type: Object, 
+    type: Object,
     default: {},
   },
 
@@ -40,7 +122,6 @@ const activitySchema = new mongoose.Schema({
     default: Date.now,
   }
 });
-
 
 module.exports =
   mongoose.models.Activity || mongoose.model("Activity", activitySchema);

@@ -13,7 +13,6 @@
     <span class="dot"></span>
   </div>
 
-  <!-- ⭐ ADDED FORM ⭐ -->
   <form action="/calculator/home" method="POST">
 
     <main class="content">
@@ -29,17 +28,15 @@
       <h3>Home Energy Usage</h3>
       <p>Estimate your home's energy consumption to calculate your carbon footprint.</p>
 
-      <!-- Monthly Electricity -->
       <div class="section">
         <label>Monthly Electricity Usage (kWh)</label>
         <div class="slider-group">
-          <input type="range" min="0" max="1000" value="150"
+          <input type="range" min="0" max="1500" value="150"
                  id="electricityRange" name="electricityKwh">
           <span id="electricityValue">150 kWh</span>
         </div>
       </div>
 
-      <!-- Household Size -->
       <div class="section">
         <label>Household Size</label>
         <p class="subtext">Number of people living in your household</p>
@@ -52,10 +49,9 @@
         </div>
       </div>
 
-      <!-- Energy Source -->
       <div class="section">
         <label>Energy Source</label>
-        <select name="energySource">
+        <select name="energySource" id="energySource" required>
           <option value="" disabled selected>Select</option>
           <option value="renewable">☀️ Renewable</option>
           <option value="mixed">🔋 Mixed</option>
@@ -63,10 +59,9 @@
         </select>
       </div>
 
-      <!-- Heating Fuel -->
       <div class="section">
         <label>Main Heating Fuel</label>
-        <select name="heatingFuel">
+        <select name="heatingFuel" id="heatingFuel" required>
           <option value="" disabled selected>Select</option>
           <option value="electric">🔌 Electric</option>
           <option value="gas">⛽ Gas</option>
@@ -74,9 +69,32 @@
         </select>
       </div>
 
-      <!-- ⭐ REQUIRED HIDDEN INPUTS FOR BACKEND ⭐ -->
-      <input type="hidden" name="lpgCylinders" value="0">
-      <input type="hidden" name="waterUsage" value="0">
+      <div class="section">
+        <label>Monthly LPG Cylinders</label>
+        <div class="slider-group">
+          <input type="range" min="0" max="3" step="0.1" value="0"
+                 id="lpgRange" name="lpgCylinders">
+          <span id="lpgValue">0 cylinders</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <label>Monthly Water Usage (litres)</label>
+        <div class="slider-group">
+          <input type="range" min="0" max="30000" step="100"
+                 value="5000" id="waterRange" name="waterUsage">
+          <span id="waterValue">5000 L</span>
+        </div>
+      </div>
+
+      <input type="hidden" name="homeEstimate" id="homeEstimateHidden" value="0">
+
+      <div class="section">
+        <label>Estimated Home CO₂</label>
+        <div class="counter">
+          <span id="homeEstimatePreview">0.0 kg CO₂ / week</span>
+        </div>
+      </div>
 
       <div class="buttons">
         <a href="/calculator/travel"><button type="button" class="prev">Previous</button></a>
@@ -88,8 +106,8 @@
 </div>
 
 <script>
-  // Theme code (unchanged)
   const htmlElement = document.documentElement;
+
   function setTheme(theme) {
     if (theme === 'dark') {
       htmlElement.classList.remove('light');
@@ -100,43 +118,103 @@
     }
     localStorage.setItem('theme', theme);
   }
+
   const savedTheme = localStorage.getItem('theme');
   setTheme(savedTheme || 'light');
 
-  // Slider logic
-  function updateSlider(sliderElement, valueElement) {
-    const value = sliderElement.value;
-    const min = sliderElement.min;
-    const max = sliderElement.max;
+  function updateSlider(sliderElement, valueElement, suffix = "") {
+    const value = Number(sliderElement.value);
+    const min = Number(sliderElement.min);
+    const max = Number(sliderElement.max);
     const percent = ((value - min) / (max - min)) * 100;
 
-    valueElement.textContent = value + " kWh";
+    valueElement.textContent = `${value} ${suffix}`.trim();
     sliderElement.style.setProperty('--value-percent', `${percent}%`);
   }
 
   const electricityRange = document.getElementById('electricityRange');
   const electricityValue = document.getElementById('electricityValue');
 
-  electricityRange.addEventListener('input', () => {
-    updateSlider(electricityRange, electricityValue);
-  });
+  const lpgRange = document.getElementById('lpgRange');
+  const lpgValue = document.getElementById('lpgValue');
 
-  document.addEventListener('DOMContentLoaded', () => {
-    updateSlider(electricityRange, electricityValue);
-  });
+  const waterRange = document.getElementById('waterRange');
+  const waterValue = document.getElementById('waterValue');
 
-  // Household counter
+  const energySource = document.getElementById('energySource');
+  const heatingFuel = document.getElementById('heatingFuel');
+
   const decrease = document.getElementById('decrease');
   const increase = document.getElementById('increase');
   const householdValue = document.getElementById('householdValue');
   const householdHidden = document.getElementById('householdHidden');
+
+  const homeEstimatePreview = document.getElementById('homeEstimatePreview');
+  const homeEstimateHidden = document.getElementById('homeEstimateHidden');
+
   let count = 2;
+
+  function getEnergySourceFactor(source) {
+    switch (source) {
+      case "renewable": return 0.20;
+      case "mixed": return 0.45;
+      case "nonrenewable": return 0.70;
+      default: return 0.45;
+    }
+  }
+
+  function getHeatingFactor(fuel) {
+    switch (fuel) {
+      case "electric": return 0.8;
+      case "gas": return 2.5;
+      case "wood": return 1.2;
+      default: return 0;
+    }
+  }
+
+  function calculateHomeEstimate() {
+    const electricityKwh = Number(electricityRange.value || 0);
+    const householdSize = Number(householdHidden.value || 1);
+    const lpgCylinders = Number(lpgRange.value || 0);
+    const waterUsage = Number(waterRange.value || 0);
+
+    const sourceFactor = getEnergySourceFactor(energySource.value);
+    const heatingFactor = getHeatingFactor(heatingFuel.value);
+
+    const electricityMonthly = electricityKwh * sourceFactor;
+    const lpgMonthly = lpgCylinders * 29.0;
+    const waterMonthly = waterUsage * 0.0003;
+    const heatingMonthly = householdSize * heatingFactor;
+
+    const monthlyTotal = electricityMonthly + lpgMonthly + waterMonthly + heatingMonthly;
+    const weeklyTotal = monthlyTotal / 4.345;
+
+    const rounded = weeklyTotal.toFixed(1);
+    homeEstimatePreview.textContent = `${rounded} kg CO₂ / week`;
+    homeEstimateHidden.value = rounded;
+  }
+
+  electricityRange.addEventListener('input', () => {
+    updateSlider(electricityRange, electricityValue, "kWh");
+    calculateHomeEstimate();
+  });
+
+  lpgRange.addEventListener('input', () => {
+    updateSlider(lpgRange, lpgValue, "cylinders");
+    calculateHomeEstimate();
+  });
+
+  waterRange.addEventListener('input', () => {
+    updateSlider(waterRange, waterValue, "L");
+    calculateHomeEstimate();
+  });
 
   decrease.addEventListener('click', () => {
     if (count > 1) {
       count--;
       householdValue.textContent = count;
       householdHidden.value = count;
+      calculateHomeEstimate();
     }
   });
 
@@ -144,5 +222,16 @@
     count++;
     householdValue.textContent = count;
     householdHidden.value = count;
+    calculateHomeEstimate();
+  });
+
+  energySource.addEventListener('change', calculateHomeEstimate);
+  heatingFuel.addEventListener('change', calculateHomeEstimate);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateSlider(electricityRange, electricityValue, "kWh");
+    updateSlider(lpgRange, lpgValue, "cylinders");
+    updateSlider(waterRange, waterValue, "L");
+    calculateHomeEstimate();
   });
 </script>
