@@ -1,48 +1,102 @@
-# 🌍 GoSustain — Personal Carbon Footprint Tracker
+# 🌍 GoSustain
 
-In the fight against climate change, we introduce GoSustain — a smart energy optimization platform that transforms sustainability into everyday action. It collects real-time device data, uncovers consumption patterns, and delivers hyper-personalized recommendations through interactive dashboards. Powered by anomaly detection and predictive AI, GoSustain automates savings, slashes wastage and carbon emissions, and empowers households and organizations to live greener — efficiently and affordably.
+GoSustain is a sustainability web app that helps users track carbon emissions, manage eco-friendly activities, and discover personalized recommendations for lower-impact living.
 
----
+## 🚀 What it does
 
-## 🚀 Overview
+- Tracks emissions from travel, home energy, food & diet, and waste.
+- Provides a carbon calculator and lifestyle insights.
+- Includes gamification with quizzes, leaderboards, community features, and rewards.
+- Supports authentication, global flash notifications, and file-based receipt parsing.
 
-GoSustain empowers users to understand their environmental impact and make eco-friendly lifestyle changes.  
-The platform calculates estimated **CO₂ emissions** from each activity and offers **AI-driven suggestions** for reducing them.
+## ✨ Key Features
 
----
-
-## 🧠 Features
-
-✅ **User Authentication** — Secure login/register system using Passport.js  
-✅ **Activity Tracking** — Log daily travel, energy, and diet data  
-✅ **Carbon Calculator** — Estimate CO₂ emissions via API or offline formulas  
-✅ **Personal Dashboard** — Visual summary of total emissions and weekly insights  
-✅ **AI Chatbot (EcoBot)** — Interactive chat assistant that provides eco-friendly tips  
-✅ **Responsive UI** — Clean, modern layout adaptable to all devices  
-✅ **Flash Messages** — User-friendly notifications for every action  
-
----
+- User registration and login with Passport.js
+- Activity tracking and personal summary dashboards
+- Carbon footprint calculator for diet, travel, home energy, and recycling
+- Gamified quizzes, leaderboards, and achievement badges
+- Community discussion pages and eco-friendly marketplace
+- Receipt parsing and analytics via integrated receipt utilities
+- QR generator and map features for engagement
+- Responsive UI with EJS view templates and modular frontend assets
 
 ## 🧰 Tech Stack
 
-**Frontend**
-- EJS (Templating)
-- HTML5, CSS3 (modular files per page)
-- JavaScript (Dynamic UI)
-- Responsive Design inspired by Tailwind/GoSustain Theme
+- Node.js + Express
+- MongoDB + Mongoose
+- Passport.js + passport-local-mongoose
+- EJS + express-ejs-layouts
+- Axios, fetch, Chart.js, Multer, PDFKit, QRCode, Sharp
 
-**Backend**
-- Node.js
-- Express.js
-- Passport.js (Authentication)
-- MongoDB (Local connection)
-- Mongoose ORM
+## 📁 Project Structure
 
-**APIs & Utilities**
-- (Optional) Climatiq API for real carbon emission data  
-- Custom utility `calculatecarbon.js` for fallback emission formulas  
+- `app.js` — main Express server and route registration
+- `routes/` — application route handlers
+- `models/` — Mongoose schemas and data models
+- `views/` — EJS page templates and layouts
+- `public/` — static assets (CSS, JS, images)
+- `utils/` — helper modules for carbon calculation, receipts, insights, and rewards
+- `data/` — static data files used by the app
+- `uploads/` — uploaded assets and receipt files
+- `receipt-parser/` — separate receipt parsing frontend and backend utilities
 
----
+## ⚙️ Installation
 
-## 🧩 Folder Structure
+1. Clone the repository
+
+   ```bash
+   git clone <repository-url>
+   cd GoSustain
+   ```
+
+2. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the project root with:
+
+   ```env
+   MONGO_URI=mongodb://localhost:27017/gosustain
+   SESSION_SECRET=your-secret-key
+   PORT=3000
+   ```
+
+4. Start the application
+
+   ```bash
+   node app.js
+   ```
+
+5. Open in browser
+
+   ```text
+   http://localhost:3000
+   ```
+
+## 🛠️ Environment Variables
+
+- `MONGO_URI` — MongoDB connection string
+- `SESSION_SECRET` — secret key for session encryption
+- `PORT` — optional Express server port
+
+## 🚀 Available Scripts
+
+- `npm start` — start the server via `node app.js`
+- `npm test` — placeholder test command
+
+## 💡 Notes
+
+- Ensure MongoDB is running before launching the app.
+- Customize routes and views in `routes/` and `views/` to add new sustainability features.
+- The app uses session-based authentication and flash messaging for user interactions.
+
+## 🙌 Contributing
+
+Contributions are welcome! If you want to add new calculators, improve the UI, or connect real carbon APIs, feel free to open an issue or submit a pull request.
+
+## 📜 License
+
+This project is released under the ISC License.
 
