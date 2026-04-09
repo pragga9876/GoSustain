@@ -2,28 +2,6 @@
 <div class="airefy-container">
 <div class="scene" aria-hidden="true"></div>
 
-<!-- Background SVG -->
-<svg class="bg-paths" role="img" aria-label="Decorative background paths">
-  <title>Decorative background lines</title>
-  <desc>Subtle technical wireframe lines moving slowly behind content.</desc>
-  <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#7bd1ff" stop-opacity="0.85" />
-      <stop offset="100%" stop-color="#9b87f5" stop-opacity="0.85" />
-    </linearGradient>
-  </defs>
-  <g>
-    <path d="M0,40 C120,90 240,10 360,60 S600,120 980,40" />
-    <path d="M0,120 C160,180 280,60 420,120 S720,200 980,120" />
-    <path d="M0,220 C100,300 280,200 440,260 S760,340 980,260" />
-    <path d="M0,340 C200,380 360,320 540,360 S820,420 980,380" />
-    <path d="M0,440 C140,500 320,420 520,460 S820,520 980,500" />
-    <path d="M0,540 C120,600 300,520 500,560 S820,620 980,600" />
-    <path d="M0,640 C160,700 340,620 540,660 S840,720 980,700" />
-    <path d="M0,740 C180,780 360,720 560,760 S860,820 980,800" />
-    <path d="M0,840 C200,880 380,820 580,860 S880,920 980,900" />
-  </g>
-</svg>
 
 <div class="wrap">
   <!-- HEADER -->
@@ -41,12 +19,7 @@
 
     <div class="controls">
       <button id="themeBtn" class="btn theme-toggle">
-        <svg class="sun" width="18" height="18" fill="none">
-          <circle cx="12" cy="12" r="4" stroke="currentColor" />
-        </svg>
-        <svg class="moon" width="18" height="18" fill="none">
-          <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 1 0 10.5 10.5Z" stroke="currentColor" />
-        </svg>
+        
       </button>
       <button id="resetBtn" class="btn">Reset</button>
     </div>
@@ -80,10 +53,7 @@
         <div>
           <div>PM2.5: <strong id="pm25">—</strong> µg/m³</div>
 
-          <div class="bars">
-            <div class="bar" id="barPlace"><span></span></div>
-            <div class="bar" id="barGood"><span></span></div>
-          </div>
+          
 
           <div class="compareRow">
             <span id="compareText">Comparing with:</span>
@@ -100,15 +70,7 @@
     <!-- POLLUTANT BREAKDOWN -->
     <section class="card panel proximity-glow">
       <h2>Pollutant breakdown</h2>
-      <div id="breakdown">
-        <p>PM2.5: <span id="b_pm25"></span></p>
-        <p>PM10: <span id="b_pm10"></span></p>
-        <p>NO₂: <span id="b_no2"></span></p>
-        <p>SO₂: <span id="b_so2"></span></p>
-        <p>O₃: <span id="b_o3"></span></p>
-        <p>CO: <span id="b_co"></span></p>
-      </div>
-
+      
       <div id="bdBar" class="bd-bar"></div>
       <div id="bdLegend" class="bd-legend"></div>
     </section>
