@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GoSustain Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 320px;
+      padding: 16px;
+      margin: 0;
+      background: #f4faf4;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #1f5f3b;
+      font-size: 18px;
+    }
+
+    p {
+      color: #444;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      background: #2e7d32;
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #256728;
+    }
+
+    #status {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #222;
+      white-space: pre-wrap;
+    }
+
+    .muted {
+      color: #777;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>GoSustain Purchase Tracker</h2>
+  <p>
+    Open an Amazon or Flipkart product/order page, then click below to extract visible purchase data and send it to your backend.
+  </p>
+
+  <button id="extractBtn">Extract and Save</button>
+
+  <div id="status">Waiting...</div>
+
+  <div class="muted">
+    Make sure you are logged into your GoSustain website first.
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

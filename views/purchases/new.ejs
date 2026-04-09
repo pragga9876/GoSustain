@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Purchase</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f8f4;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #1f5f3b;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cfd8cf;
+      border-radius: 10px;
+      font-size: 15px;
+      margin-top: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #256728;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 16px;
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Add a Purchase</h1>
+
+    <form action="/purchases" method="POST">
+      <div>
+        <label for="platform">Platform</label>
+        <select name="platform" id="platform">
+          <option value="Manual">Manual</option>
+          <option value="Amazon">Amazon</option>
+          <option value="Flipkart">Flipkart</option>
+          <option value="Receipt">Receipt</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="title">Product Title</label>
+        <input type="text" id="title" name="title" placeholder="e.g. Milton Water Bottle" required>
+      </div>
+
+      <div>
+        <label for="category">Category</label>
+        <input type="text" id="category" name="category" placeholder="e.g. Household, Electronics, Clothing">
+      </div>
+
+      <div>
+        <label for="price">Price</label>
+        <input type="number" id="price" name="price" min="0" step="0.01" required>
+      </div>
+
+      <div>
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+      </div>
+
+      <div>
+        <label for="orderDate">Order Date</label>
+        <input type="date" id="orderDate" name="orderDate">
+      </div>
+
+      <button type="submit">Save Purchase</button>
+    </form>
+
+    <a href="/purchases" class="back-link">← Back to Purchases</a>
+  </div>
+</body>
+</html>

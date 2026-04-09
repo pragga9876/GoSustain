@@ -22,6 +22,8 @@ const airefyRoutes = require("./routes/airefy");
 const mapRoutes = require("./routes/map");
 const receiptRouter = require("./routes/receipt");
 const lcaRouter = require("./routes/lca");
+const purchasesRouter = require("./routes/purchases");
+const extensionRouter = require("./routes/extension");
 
 dotenv.config();
 
@@ -45,6 +47,13 @@ const store = MongoStore.create({
 store.on("error", function (e) {
   console.log("SESSION STORE ERROR", e);
 });
+
+const cors = require("cors");
+
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 
 // EJS Setup
 app.set("view engine", "ejs");
@@ -103,6 +112,8 @@ app.use("/airefy", airefyRoutes);
 app.use("/map", mapRoutes);
 app.use("/api/receipt", receiptRouter);
 app.use("/lca", lcaRouter);
+app.use("/purchases", purchasesRouter);
+app.use("/api/extension", extensionRouter);
 
 // Server Start
 const PORT = process.env.PORT || 3000;
