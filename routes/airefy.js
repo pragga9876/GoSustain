@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const FavouriteLocation = require("../models/FavoriteLocation");
 const { isLoggedIn } = require("../middleware/auth");
 const dotenv = require("dotenv");
 dotenv.config();
